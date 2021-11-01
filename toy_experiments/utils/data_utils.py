@@ -1,8 +1,12 @@
 import numpy as np
 from sklearn import utils as skutils
+from numpy.random import RandomState
+from random import Random
 
-from utils.rng import np_rng, py_rng
+seed = 2
 
+py_rng = Random(seed)
+np_rng = RandomState(seed)
 
 class ToyDataset():
     def __init__(self, samples, target):
