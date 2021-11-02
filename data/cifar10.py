@@ -10,9 +10,25 @@ import shutil
 import numpy as np
 import urllib3
 from sklearn.model_selection import train_test_split
-from utils.adapt_data import adapt_labels_outlier_task
 
 logger = logging.getLogger(__name__)
+
+def adapt_labels_outlier_task(true_labels, label):
+    """Adapt labels to anomaly detection context
+
+    Args :
+            true_labels (list): list of ints
+            label (int): label which is considered inlier
+    Returns :
+            true_labels (list): list of labels, 1 for anomalous and 0 for normal
+    """
+    if label == 1:
+        (true_labels[true_labels == label], true_labels[true_labels != label]) = (1, 0)
+        true_labels = [1] * true_labels.shape[0] - true_labels
+    else:
+        (true_labels[true_labels != label], true_labels[true_labels == label]) = (1, 0)
+    return true_labels
+
 
 def get_train(label=-1, centered=True, normalize=True):
     return _get_adapted_dataset("train", label, centered, normalize)
