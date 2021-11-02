@@ -566,3 +566,17 @@ def run(args):
         train_and_test(args.dataset, args.nb_epochs, args.d, args.rd, args.label,
                       args.enable_dzz, args.enable_sm, args.m,
                        args.enable_early_stop, args.sn)
+
+"""    dataset (str): name of the dataset
+        nb_epochs (int): number of epochs
+        degree (int): degree of the norm in the feature matching
+        random_seed (int): trying different seeds for averaging the results
+        label (int): label which is normal for image experiments
+        allow_zz (bool): allow the d_zz discriminator or not for ablation study
+        enable_sm (bool): allow TF summaries for monitoring the training
+        score_method (str): which metric to use for the ablation study
+        enable_early_stop (bool): allow early stopping for determining the number of epochs
+        do_spectral_norm (bool): allow spectral norm or not for ablation study
+"""
+
+train_and_test("cifar10",500,2,2,1,True,True,"",True,False)
