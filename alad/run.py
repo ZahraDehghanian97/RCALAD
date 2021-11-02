@@ -51,8 +51,7 @@ def create_logdir(dataset, label, rd,
 def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                    allow_zz, enable_sm, score_method,
                    enable_early_stop, do_spectral_norm):
-    """ Runs the AliCE on the specified dataset
-
+    """
     Note:
         Saves summaries on tensorboard. To display them, please use cmd line
         tensorboard --logdir=model.training_logdir() --port=number
@@ -567,16 +566,6 @@ def run(args):
                       args.enable_dzz, args.enable_sm, args.m,
                        args.enable_early_stop, args.sn)
 
-"""    dataset (str): name of the dataset
-        nb_epochs (int): number of epochs
-        degree (int): degree of the norm in the feature matching
-        random_seed (int): trying different seeds for averaging the results
-        label (int): label which is normal for image experiments
-        allow_zz (bool): allow the d_zz discriminator or not for ablation study
-        enable_sm (bool): allow TF summaries for monitoring the training
-        score_method (str): which metric to use for the ablation study
-        enable_early_stop (bool): allow early stopping for determining the number of epochs
-        do_spectral_norm (bool): allow spectral norm or not for ablation study
-"""
-
-train_and_test("cifar10",500,2,2,1,True,True,"",True,False)
+train_and_test(dataset="cifar10",nb_epochs=500,degree=2,random_seed=2
+               ,label=1,allow_zz=True,enable_sm=True,score_method=""
+               ,enable_early_stop=True,do_spectral_norm=False)
