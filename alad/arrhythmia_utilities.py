@@ -6,7 +6,6 @@ Generator (decoder), encoder and discriminator.
 
 """
 import tensorflow as tf
-from utils import sn
 
 learning_rate = 1e-5
 batch_size = 32
