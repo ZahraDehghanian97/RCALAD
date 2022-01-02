@@ -47,7 +47,7 @@ def _get_dataset(scale):
                 dataset['y_test'] (np.array): testing labels shape
                 (?,)
     """
-    data = scipy.io.loadmat("data/arrhythmia.mat")
+    data = scipy.io.loadmat("D:/univesity/foqelisans/final_project/code/Adversarially-Learned-Anomaly-Detection1/data/arrhythmia.mat")
     
     full_x_data = data["X"]
     full_y_data = data['y']

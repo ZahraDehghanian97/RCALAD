@@ -5,12 +5,12 @@ Arrhythmia ALAD architecture.
 Generator (decoder), encoder and discriminator.
 
 """
-import tensorflow as tf
-
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 learning_rate = 1e-5
 batch_size = 32
 latent_dim = 64
-init_kernel = tf.contrib.layers.xavier_initializer()
+init_kernel = tf.truncated_normal_initializer()
 
 
 class sn :
@@ -35,7 +35,7 @@ class sn :
               name=None,reuse=None):
     
         with tf.variable_scope(name, reuse=reuse):
-            inputs = tf.contrib.layers.flatten(inputs)
+            inputs = tf.layers.flatten(inputs)
             shape = inputs.get_shape().as_list()
             channels = shape[-1]
     

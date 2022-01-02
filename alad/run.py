@@ -1,3 +1,5 @@
+import warnings
+warnings.filterwarnings('ignore')
 import time
 import numpy as np
 import tensorflow.compat.v1 as tf
@@ -567,6 +569,6 @@ def run(args):
                       args.enable_dzz, args.enable_sm, args.m,
                        args.enable_early_stop, args.sn)
 
-train_and_test(dataset="cifar10",nb_epochs=500,degree=2,random_seed=2
+train_and_test(dataset="arrhythmia",nb_epochs=500,degree=2,random_seed=2
                ,label=1,allow_zz=True,enable_sm=True,score_method=""
-               ,enable_early_stop=True,do_spectral_norm=False)
+               ,enable_early_stop=False,do_spectral_norm=False)
