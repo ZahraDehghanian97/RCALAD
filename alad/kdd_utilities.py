@@ -5,13 +5,14 @@ KDD ALAD architecture.
 Generator (decoder), encoder and discriminator.
 
 """
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 from utils import sn
 
 learning_rate = 1e-5
 batch_size = 50
 latent_dim = 32
-init_kernel = tf.contrib.layers.xavier_initializer()
+init_kernel = tf.truncated_normal_initializer()
 
 def leakyReLu(x, alpha=0.2, name=None):
     if name:
