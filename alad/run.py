@@ -288,13 +288,13 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             score_ch = tf.squeeze(score_ch)
 
             rec = x_pl - rec_x_ema
-            rec = tf.contrib.layers.flatten(rec)
+            rec = tf.layers.flatten(rec)
             score_l1 = tf.norm(rec, ord=1, axis=1,
                             keep_dims=False, name='d_loss')
             score_l1 = tf.squeeze(score_l1)
 
             rec = x_pl - rec_x_ema
-            rec = tf.contrib.layers.flatten(rec)
+            rec = tf.layers.flatten(rec)
             score_l2 = tf.norm(rec, ord=2, axis=1,
                             keep_dims=False, name='d_loss')
             score_l2 = tf.squeeze(score_l2)
@@ -302,7 +302,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             inter_layer_inp, inter_layer_rct = inter_layer_inp_emaxx, \
                                                inter_layer_rct_emaxx
             fm = inter_layer_inp - inter_layer_rct
-            fm = tf.contrib.layers.flatten(fm)
+            fm = tf.layers.flatten(fm)
             score_fm = tf.norm(fm, ord=degree, axis=1,
                              keep_dims=False, name='d_loss')
             score_fm = tf.squeeze(score_fm)

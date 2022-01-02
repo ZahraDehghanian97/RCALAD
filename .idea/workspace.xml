@@ -2,13 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="77b3a0d3-1246-4a71-99d6-4088611d7fca" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alad/ALAD_Arrythmia.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/alad/ALAD_Arrythmia.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alad/ALAD_cifar10.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/alad/ALAD_cifar10.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/alad/cifar10_utilities.py" beforeDir="false" afterPath="$PROJECT_DIR$/alad/cifar10_utilities.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/alad/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/alad/run.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/cifar10.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/cifar10.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -81,14 +76,25 @@
         </counts>
       </usages-collector>
     </session>
+    <session id="135349230">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.open.time.0" value="1" />
+          <entry key="project.opened" value="1" />
+        </counts>
+      </usages-collector>
+    </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/alad/run.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="44">
-              <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="3" selection-end-column="24" />
+            <state relative-caret-position="154">
+              <caret line="304" column="19" selection-start-line="304" selection-start-column="19" selection-end-line="304" selection-end-column="19" />
+              <folding>
+                <element signature="e#0#11#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -96,7 +102,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/data/cifar10.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2552">
+            <state relative-caret-position="419">
               <caret line="116" column="56" selection-start-line="116" selection-start-column="56" selection-end-line="116" selection-end-column="56" />
               <folding>
                 <element signature="e#22#36#0" expanded="true" />
@@ -117,8 +123,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/alad/cifar10_utilities.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="66">
-              <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
+            <state relative-caret-position="154">
+              <caret line="421" column="36" lean-forward="true" selection-start-line="421" selection-start-column="36" selection-end-line="421" selection-end-column="36" />
             </state>
           </provider>
         </entry>
@@ -142,6 +148,7 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>con</find>
+      <find>.contrib</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -172,28 +179,23 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
-              <item name="Adversarially-Learned-Anomaly-Detection" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Adversarially-Learned-Anomaly-Detection" type="462c0819:PsiDirectoryNode" />
+              <item name="Adversarially-Learned-Anomaly-Detection1" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Adversarially-Learned-Anomaly-Detection1" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="Adversarially-Learned-Anomaly-Detection" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Adversarially-Learned-Anomaly-Detection" type="462c0819:PsiDirectoryNode" />
+              <item name="Adversarially-Learned-Anomaly-Detection1" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Adversarially-Learned-Anomaly-Detection1" type="462c0819:PsiDirectoryNode" />
               <item name="alad" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Adversarially-Learned-Anomaly-Detection" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Adversarially-Learned-Anomaly-Detection" type="462c0819:PsiDirectoryNode" />
-              <item name="data" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -256,7 +258,7 @@
     <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.21462639" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.21462639" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -279,23 +281,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/alad/ALAD_Arrythmia.ipynb">
-      <provider selected="true" editor-type-id="ipnb-editor">
-        <state>
-          <selected id="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/requirements.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="10" selection-start-line="10" selection-end-line="10" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/alad/ALAD_cifar10.ipynb">
       <provider selected="true" editor-type-id="ipnb-editor">
         <state>
@@ -314,31 +299,42 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="109">
           <caret line="98" column="4" selection-start-line="98" selection-start-column="4" selection-end-line="98" selection-end-column="4" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/data/kdd.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/requirements.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#14#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="220">
+          <caret line="10" selection-start-line="10" selection-end-line="10" />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/alad/ALAD_Arrythmia.ipynb">
+      <provider selected="true" editor-type-id="ipnb-editor">
+        <state>
+          <selected id="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/alad/run.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="44">
-          <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="3" selection-end-column="24" />
+        <state relative-caret-position="154">
+          <caret line="304" column="19" selection-start-line="304" selection-start-column="19" selection-end-line="304" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/data/cifar10.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2552">
+        <state relative-caret-position="419">
           <caret line="116" column="56" selection-start-line="116" selection-start-column="56" selection-end-line="116" selection-end-column="56" />
           <folding>
             <element signature="e#22#36#0" expanded="true" />
@@ -348,8 +344,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/alad/cifar10_utilities.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="66">
-          <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
+        <state relative-caret-position="154">
+          <caret line="421" column="36" lean-forward="true" selection-start-line="421" selection-start-column="36" selection-end-line="421" selection-end-column="36" />
         </state>
       </provider>
     </entry>

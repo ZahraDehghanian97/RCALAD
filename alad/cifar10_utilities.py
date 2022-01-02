@@ -35,7 +35,7 @@ class sn :
               name=None,reuse=None):
     
         with tf.variable_scope(name, reuse=reuse):
-            inputs = tf.contrib.layers.flatten(inputs)
+            inputs = tf.layers.flatten(inputs)
             shape = inputs.get_shape().as_list()
             channels = shape[-1]
     
@@ -419,7 +419,7 @@ def discriminator_xx(x, rec_x, is_training=False, getter=None, reuse=False,
             net = tf.layers.dropout(net, rate=0.2, training=is_training,
                                   name='dropout')
 
-        net = tf.contrib.layers.flatten(net)
+        net = tf.layers.flatten(net)
 
         intermediate_layer = net
         name_net = 'layer_3'
