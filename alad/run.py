@@ -1,6 +1,7 @@
 import time
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 #import tf_cnnvis
 import logging
 import importlib
@@ -66,7 +67,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
         score_method (str): which metric to use for the ablation study
         enable_early_stop (bool): allow early stopping for determining the number of epochs
         do_spectral_norm (bool): allow spectral norm or not for ablation study
-    """
+     """
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True
     logger = logging.getLogger("ALAD.run.{}.{}".format(

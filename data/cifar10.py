@@ -79,42 +79,42 @@ def _get_dataset(split, centered=False, normalize=False):
     Returns : 
             (tuple): <training, testing> images and labels
     '''
-    path = "data"
-    dirname = "cifar-10-batches-py"
-    data_url = "http://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz"
-
-    if not os.path.exists(os.path.join(path, dirname)):
-        # Extract or download data
-        try:
-            os.makedirs(path)
-        except OSError as exception:
-            if exception.errno != errno.EEXIST:
-                raise
-        
-        file_path = os.path.join(path, data_url.split('/')[-1])
-        if not os.path.exists(file_path):
-            # Download
-            logger.warn("Downloading {}".format(data_url))
-            with urllib3.PoolManager().request('GET', data_url, preload_content=False) as r, \
-                 open(file_path, 'wb') as w:
-                    shutil.copyfileobj(r, w)
-
-        logger.warn("Unpacking {}".format(file_path))
-        # Unpack data
-        tarfile.open(name=file_path, mode="r:gz").extractall(path)
+    data_path = "D:/univesity/foqelisans/final_project/code/Adversarially-Learned-Anomaly-Detection/data/cifar-10-batches-py"
+    # dirname = "cifar-10-python.tar.gz"
+    # path = "D:/univesity/foqelisans/final_project/code/Adversarially-Learned-Anomaly-Detection/data"
+    # data_url = "http://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz"
+    # # print(os.path.join(path,dirname))
+    # if not os.path.exists(os.path.join(path,dirname)):
+    #     # Extract or download data
+    #     try:
+    #         os.makedirs(path)
+    #     except OSError as exception:
+    #         if exception.errno != errno.EEXIST:
+    #             raise
+    #
+    #     file_path = os.path.join(path, data_url.split('/')[-1])
+    #     if not os.path.exists(file_path):
+    #         # Download
+    #         logger.warn("Downloading {}".format(data_url))
+    #         with urllib3.PoolManager().request('GET', data_url, preload_content=False) as r, \
+    #              open(file_path, 'wb') as w:
+    #                 shutil.copyfileobj(r, w)
+    #
+    #     logger.warn("Unpacking {}".format(file_path))
+    #     # Unpack data
+    #     tarfile.open(name=file_path, mode="r:gz").extractall(path)
 
     # Import the data
     if split == 'test':
         filenames = ["test_batch"] 
-    # elif split == 'valid':
-    #     filenames = ["data_batch_5"]
+    elif split == 'valid':
+        filenames = ["data_batch_5"]
     else:
         filenames = ["data_batch_{}".format(i) for i in range(1, 6)]
-    
     imgs = []
     lbls = []
     for f in filenames:
-        img, lbl = _unpickle_file(os.path.join(path, dirname, f))
+        img, lbl = _unpickle_file(os.path.join(data_path, f))
         imgs.append(img)
         lbls.append(lbl)
 

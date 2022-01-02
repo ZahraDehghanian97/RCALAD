@@ -8,4 +8,4 @@ opencv-python
 gensim
 pillow
 regex
-tensorflow-gpu==1.6
+

@@ -5,7 +5,8 @@ CIFAR10 ALAD architecture.
 Generator (decoder), encoder and discriminator.
 
 """
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 
 learning_rate = 0.0002
 batch_size = 32
