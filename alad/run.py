@@ -1,31 +1,34 @@
 import warnings
+
 warnings.filterwarnings('ignore')
 import time
 import numpy as np
 import tensorflow.compat.v1 as tf
+
 tf.disable_v2_behavior()
-#import tf_cnnvis
+import os
+# import tf_cnnvis
 import logging
 import importlib
 import sys
-import sys
-# insert at 1, 0 is the script path (or '' in REPL)
-# sys.path.insert(1, '/content/Adversarially-Learned-Anomaly-Detection/utils')
-# sys.path.insert(0, '/content/Adversarially-Learned-Anomaly-Detection/utils')
-sys.path.append('/content/Adversarially-Learned-Anomaly-Detection')
+# sys.path.append('/content/Adversarially-Learned-Anomaly-Detection')
 from utils.adapt_data import batch_fill
 from utils.evaluations import save_results, heatmap
 from utils.constants import IMAGES_DATASETS
-FREQ_PRINT = 200 # print frequency image tensorboard [20]
+
+FREQ_PRINT = 200  # print frequency image tensorboard [20]
 FREQ_EV = 1
 PATIENCE = 10
+
 
 def get_getter(ema):  # to update neural net with moving avg variables, suitable for ss learning cf Saliman
     def ema_getter(getter, name, *args, **kwargs):
         var = getter(name, *args, **kwargs)
         ema_var = ema.average(var)
         return ema_var if ema_var else var
+
     return ema_getter
+
 
 def display_parameters(batch_size, starting_lr, ema_decay, degree, label,
                        allow_zz, score_method, do_spectral_norm):
@@ -40,12 +43,14 @@ def display_parameters(batch_size, starting_lr, ema_decay, degree, label,
     print('Discriminator zz enabled: ', allow_zz)
     print('Spectral Norm enabled: ', do_spectral_norm)
 
+
 def display_progression_epoch(j, id_max):
     """See epoch progression
     """
     batch_progression = int((j / id_max) * 100)
     sys.stdout.write(str(batch_progression) + ' % epoch' + chr(13))
     _ = sys.stdout.flush
+
 
 def create_logdir(dataset, label, rd,
                   allow_zz, score_method, do_spectral_norm):
@@ -54,6 +59,7 @@ def create_logdir(dataset, label, rd,
     return "train_logs/{}/{}/dzzenabled{}/{}/label{}/" \
            "rd{}".format(dataset, model, allow_zz,
                          score_method, label, rd)
+
 
 def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                    allow_zz, enable_sm, score_method,
@@ -103,10 +109,10 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     # Data
     logger.info('Data loading...')
     trainx, trainy = data.get_train(label)
-    if enable_early_stop: validx, validy = data.get_valid(label)
     trainx_copy = trainx.copy()
+    if enable_early_stop: validx, validy = data.get_valid(label)
     testx, testy = data.get_test(label)
-
+    print(testy.shape)
     rng = np.random.RandomState(random_seed)
     nr_batches_train = int(trainx.shape[0] / batch_size)
     nr_batches_test = int(testx.shape[0] / batch_size)
@@ -137,33 +143,33 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
     with tf.variable_scope('discriminator_model_xz'):
         l_encoder, inter_layer_inp_xz = dis_xz(x_pl, z_gen,
-                                            is_training=is_training_pl,
-                    do_spectral_norm=do_spectral_norm)
+                                               is_training=is_training_pl,
+                                               do_spectral_norm=do_spectral_norm)
         l_generator, inter_layer_rct_xz = dis_xz(x_gen, z_pl,
-                                              is_training=is_training_pl,
-                                              reuse=True,
-                    do_spectral_norm=do_spectral_norm)
+                                                 is_training=is_training_pl,
+                                                 reuse=True,
+                                                 do_spectral_norm=do_spectral_norm)
 
     with tf.variable_scope('discriminator_model_xx'):
         x_logit_real, inter_layer_inp_xx = dis_xx(x_pl, x_pl,
                                                   is_training=is_training_pl,
-                    do_spectral_norm=do_spectral_norm)
+                                                  do_spectral_norm=do_spectral_norm)
         x_logit_fake, inter_layer_rct_xx = dis_xx(x_pl, rec_x, is_training=is_training_pl,
-                              reuse=True, do_spectral_norm=do_spectral_norm)
+                                                  reuse=True, do_spectral_norm=do_spectral_norm)
 
     with tf.variable_scope('discriminator_model_zz'):
         z_logit_real, _ = dis_zz(z_pl, z_pl, is_training=is_training_pl,
                                  do_spectral_norm=do_spectral_norm)
         z_logit_fake, _ = dis_zz(z_pl, rec_z, is_training=is_training_pl,
-                              reuse=True, do_spectral_norm=do_spectral_norm)
+                                 reuse=True, do_spectral_norm=do_spectral_norm)
 
     with tf.name_scope('loss_functions'):
 
         # discriminator xz
         loss_dis_enc = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
-            labels=tf.ones_like(l_encoder),logits=l_encoder))
+            labels=tf.ones_like(l_encoder), logits=l_encoder))
         loss_dis_gen = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
-            labels=tf.zeros_like(l_generator),logits=l_generator))
+            labels=tf.zeros_like(l_generator), logits=l_generator))
         dis_loss_xz = loss_dis_gen + loss_dis_enc
 
         # discriminator xx
@@ -185,7 +191,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
         # generator and encoder
         gen_loss_xz = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
-            labels=tf.ones_like(l_generator),logits=l_generator))
+            labels=tf.ones_like(l_generator), logits=l_generator))
         enc_loss_xz = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
             labels=tf.zeros_like(l_encoder), logits=l_encoder))
         x_real_gen = tf.nn.sigmoid_cross_entropy_with_logits(
@@ -225,11 +231,11 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                              ('discriminator_model_zz' in x.name)]
 
         optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate,
-                                                  beta1=0.5)
+                                           beta1=0.5)
 
         with tf.control_dependencies(update_ops_gen):
             gen_op = optimizer.minimize(loss_generator, var_list=gvars,
-                                            global_step=global_step)
+                                        global_step=global_step)
         with tf.control_dependencies(update_ops_enc):
             enc_op = optimizer.minimize(loss_encoder, var_list=evars)
 
@@ -266,44 +272,42 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
     with tf.variable_scope('generator_model'):
         rec_x_ema = gen(z_gen_ema, is_training=is_training_pl,
-                              getter=get_getter(gen_ema), reuse=True)
+                        getter=get_getter(gen_ema), reuse=True)
         x_gen_ema = gen(z_pl, is_training=is_training_pl,
-                              getter=get_getter(gen_ema), reuse=True)
+                        getter=get_getter(gen_ema), reuse=True)
 
     with tf.variable_scope('discriminator_model_xx'):
         l_encoder_emaxx, inter_layer_inp_emaxx = dis_xx(x_pl, x_pl,
-                                                    is_training=is_training_pl,
-                                                    getter=get_getter(xx_ema),
-                                                    reuse=True,
-                    do_spectral_norm=do_spectral_norm)
+                                                        is_training=is_training_pl,
+                                                        getter=get_getter(xx_ema),
+                                                        reuse=True,
+                                                        do_spectral_norm=do_spectral_norm)
 
         l_generator_emaxx, inter_layer_rct_emaxx = dis_xx(x_pl, rec_x_ema,
-                                                      is_training=is_training_pl,
-                                                      getter=get_getter(
-                                                          xx_ema),
-                                                      reuse=True,
-                    do_spectral_norm=do_spectral_norm)
+                                                          is_training=is_training_pl,
+                                                          getter=get_getter(
+                                                              xx_ema),
+                                                          reuse=True,
+                                                          do_spectral_norm=do_spectral_norm)
 
     with tf.name_scope('Testing'):
 
         with tf.variable_scope('Scores'):
-
-
             score_ch = tf.nn.sigmoid_cross_entropy_with_logits(
-                    labels=tf.ones_like(l_generator_emaxx),
-                    logits=l_generator_emaxx)
+                labels=tf.ones_like(l_generator_emaxx),
+                logits=l_generator_emaxx)
             score_ch = tf.squeeze(score_ch)
 
             rec = x_pl - rec_x_ema
             rec = tf.layers.flatten(rec)
             score_l1 = tf.norm(rec, ord=1, axis=1,
-                            keep_dims=False, name='d_loss')
+                               keep_dims=False, name='d_loss')
             score_l1 = tf.squeeze(score_l1)
 
             rec = x_pl - rec_x_ema
             rec = tf.layers.flatten(rec)
             score_l2 = tf.norm(rec, ord=2, axis=1,
-                            keep_dims=False, name='d_loss')
+                               keep_dims=False, name='d_loss')
             score_l2 = tf.squeeze(score_l2)
 
             inter_layer_inp, inter_layer_rct = inter_layer_inp_emaxx, \
@@ -311,7 +315,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             fm = inter_layer_inp - inter_layer_rct
             fm = tf.layers.flatten(fm)
             score_fm = tf.norm(fm, ord=degree, axis=1,
-                             keep_dims=False, name='d_loss')
+                               keep_dims=False, name='d_loss')
             score_fm = tf.squeeze(score_fm)
 
     if enable_early_stop:
@@ -338,7 +342,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
             if enable_early_stop:
                 with tf.name_scope('validation_summary'):
-                   tf.summary.scalar('valid', rec_error_valid, ['v'])
+                    tf.summary.scalar('valid', rec_error_valid, ['v'])
 
             with tf.name_scope('img_summary'):
                 heatmap_pl_latent = tf.placeholder(tf.float32,
@@ -353,7 +357,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
             else:
                 heatmap_pl_rec = tf.placeholder(tf.float32, shape=(1, 480, 640, 3),
-                                            name="heatmap_pl_rec")
+                                                name="heatmap_pl_rec")
                 with tf.name_scope('image_summary'):
                     tf.summary.image('heatmap_rec', heatmap_pl_rec, 1, ['image'])
 
@@ -374,7 +378,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     with sv.managed_session(config=config) as sess:
 
         step = sess.run(global_step)
-        logger.info('Initialization done at step {}'.format(step/nr_batches_train))
+        logger.info('Initialization done at step {}'.format(step / nr_batches_train))
         writer = tf.summary.FileWriter(logdir, sess.graph)
         train_batch = 0
         epoch = 0
@@ -386,10 +390,10 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             lr = starting_lr
             begin = time.time()
 
-             # construct randomly permuted minibatches
+            # construct randomly permuted minibatches
             trainx = trainx[rng.permutation(trainx.shape[0])]  # shuffling dataset
             trainx_copy = trainx_copy[rng.permutation(trainx.shape[0])]
-            train_loss_dis_xz, train_loss_dis_xx,  train_loss_dis_zz, \
+            train_loss_dis_xz, train_loss_dis_xx, train_loss_dis_zz, \
             train_loss_dis, train_loss_gen, train_loss_enc = [0, 0, 0, 0, 0, 0]
 
             # Training
@@ -403,17 +407,17 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                 feed_dict = {x_pl: trainx[ran_from:ran_to],
                              z_pl: np.random.normal(size=[batch_size, latent_dim]),
                              is_training_pl: True,
-                             learning_rate:lr}
+                             learning_rate: lr}
 
                 _, _, _, ld, ldxz, ldxx, ldzz, step = sess.run([train_dis_op_xz,
-                                                              train_dis_op_xx,
-                                                              train_dis_op_zz,
-                                                              loss_discriminator,
-                                                              dis_loss_xz,
-                                                              dis_loss_xx,
-                                                              dis_loss_zz,
-                                                              global_step],
-                                                             feed_dict=feed_dict)
+                                                                train_dis_op_xx,
+                                                                train_dis_op_zz,
+                                                                loss_discriminator,
+                                                                dis_loss_xz,
+                                                                dis_loss_xx,
+                                                                dis_loss_zz,
+                                                                global_step],
+                                                               feed_dict=feed_dict)
                 train_loss_dis += ld
                 train_loss_dis_xz += ldxz
                 train_loss_dis_xx += ldxx
@@ -423,12 +427,12 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                 feed_dict = {x_pl: trainx_copy[ran_from:ran_to],
                              z_pl: np.random.normal(size=[batch_size, latent_dim]),
                              is_training_pl: True,
-                             learning_rate:lr}
-                _,_, le, lg = sess.run([train_gen_op,
-                                            train_enc_op,
-                                            loss_encoder,
-                                            loss_generator],
-                                           feed_dict=feed_dict)
+                             learning_rate: lr}
+                _, _, le, lg = sess.run([train_gen_op,
+                                         train_enc_op,
+                                         loss_encoder,
+                                         loss_generator],
+                                        feed_dict=feed_dict)
                 train_loss_gen += lg
                 train_loss_enc += le
 
@@ -437,15 +441,15 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                     writer.add_summary(sm, step)
 
                     if t % FREQ_PRINT == 0 and dataset in IMAGES_DATASETS:  # inspect reconstruction
-                        t = np.random.randint(0, trainx.shape[0]-batch_size)
+                        t = np.random.randint(0, trainx.shape[0] - batch_size)
                         ran_from = t
                         ran_to = t + batch_size
                         feed_dict = {x_pl: trainx[ran_from:ran_to],
-                            z_pl: np.random.normal(
-                                size=[batch_size, latent_dim]),
-                            is_training_pl: False}
+                                     z_pl: np.random.normal(
+                                         size=[batch_size, latent_dim]),
+                                     is_training_pl: False}
                         sm = sess.run(sum_op_im, feed_dict=feed_dict)
-                        writer.add_summary(sm, step)#train_batch)
+                        writer.add_summary(sm, step)  # train_batch)
 
                 train_batch += 1
 
@@ -487,10 +491,10 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
                 logger.info('Validation: valid loss {:.4f}'.format(valid_loss))
 
-                if (valid_loss < best_valid_loss or epoch == FREQ_EV-1):
+                if (valid_loss < best_valid_loss or epoch == FREQ_EV - 1):
                     best_valid_loss = valid_loss
                     logger.info("Best model - valid loss = {:.4f} - saving...".format(best_valid_loss))
-                    sv.saver.save(sess, logdir+'/model.ckpt', global_step=step)
+                    sv.saver.save(sess, logdir + '/model.ckpt', global_step=step)
                     nb_without_improvements = 0
                 else:
                     nb_without_improvements += FREQ_EV
@@ -498,12 +502,12 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                 if nb_without_improvements > PATIENCE:
                     sv.request_stop()
                     logger.warning(
-                      "Early stopping at epoch {} with weights from epoch {}".format(
-                          epoch, epoch - nb_without_improvements))
+                        "Early stopping at epoch {} with weights from epoch {}".format(
+                            epoch, epoch - nb_without_improvements))
 
             epoch += 1
 
-        sv.saver.save(sess, logdir+'/model.ckpt', global_step=step)
+        sv.saver.save(sess, logdir + '/model.ckpt', global_step=step)
 
         logger.warn('Testing evaluation...')
 
@@ -515,7 +519,6 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
         # Create scores
         for t in range(nr_batches_test):
-
             # construct randomly permuted minibatches
             ran_from = t * batch_size
             ran_to = (t + 1) * batch_size
@@ -523,7 +526,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
             feed_dict = {x_pl: testx[ran_from:ran_to],
                          z_pl: np.random.normal(size=[batch_size, latent_dim]),
-                         is_training_pl:False}
+                         is_training_pl: False}
 
             scores_ch += sess.run(score_ch, feed_dict=feed_dict).tolist()
             scores_l1 += sess.run(score_l1, feed_dict=feed_dict).tolist()
@@ -531,23 +534,18 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             scores_fm += sess.run(score_fm, feed_dict=feed_dict).tolist()
             inference_time.append(time.time() - begin_test_time_batch)
 
-
         inference_time = np.mean(inference_time)
         logger.info('Testing : mean inference time is %.4f' % (inference_time))
 
         if testx.shape[0] % batch_size != 0:
-
             batch, size = batch_fill(testx, batch_size)
             feed_dict = {x_pl: batch,
                          z_pl: np.random.normal(size=[batch_size, latent_dim]),
                          is_training_pl: False}
-
-            bscores_ch = sess.run(score_ch,feed_dict=feed_dict).tolist()
-            bscores_l1 = sess.run(score_l1,feed_dict=feed_dict).tolist()
-            bscores_l2 = sess.run(score_l2,feed_dict=feed_dict).tolist()
-            bscores_fm = sess.run(score_fm,feed_dict=feed_dict).tolist()
-
-
+            bscores_ch = sess.run(score_ch, feed_dict=feed_dict).tolist()
+            bscores_l1 = sess.run(score_l1, feed_dict=feed_dict).tolist()
+            bscores_l2 = sess.run(score_l2, feed_dict=feed_dict).tolist()
+            bscores_fm = sess.run(score_fm, feed_dict=feed_dict).tolist()
             scores_ch += bscores_ch[:size]
             scores_l1 += bscores_l1[:size]
             scores_l2 += bscores_l2[:size]
@@ -561,8 +559,8 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
         save_results(scores_l2, testy, model, dataset, 'l2',
                      'dzzenabled{}'.format(allow_zz), label, random_seed, step)
         save_results(scores_fm, testy, model, dataset, 'fm',
-                     'dzzenabled{}'.format(allow_zz), label, random_seed,  step)
-
+                     'dzzenabled{}'.format(allow_zz), label, random_seed, step)
+        print("hello")
 
 def run(args):
     """ Runs the training process"""
@@ -571,9 +569,10 @@ def run(args):
         # Set the graph level seed
         tf.set_random_seed(args.rd)
         train_and_test(args.dataset, args.nb_epochs, args.d, args.rd, args.label,
-                      args.enable_dzz, args.enable_sm, args.m,
+                       args.enable_dzz, args.enable_sm, args.m,
                        args.enable_early_stop, args.sn)
 
-train_and_test(dataset="arrhythmia",nb_epochs=500,degree=2,random_seed=2
-               ,label=1,allow_zz=True,enable_sm=True,score_method=""
-               ,enable_early_stop=False,do_spectral_norm=False)
+
+train_and_test(dataset="arrhythmia", nb_epochs=500, degree=2, random_seed=2
+               , label=1, allow_zz=True, enable_sm=True, score_method=""
+               , enable_early_stop=True, do_spectral_norm=False)
