@@ -106,7 +106,7 @@ def maybe_download(data_dir):
         filepath, _ = urllib.request.urlretrieve('http://ufldl.stanford.edu/housenumbers/train_32x32.mat', new_data_dir+'/train_32x32.mat', _progress)
         filepath, _ = urllib.request.urlretrieve('http://ufldl.stanford.edu/housenumbers/test_32x32.mat', new_data_dir+'/test_32x32.mat', _progress)
 
-def load(data_dir='D:/univesity/foqelisans/final_project/code/Adversarially-Learned-Anomaly-Detection1/data', subset='train'):
+def load(data_dir='/content/drive/MyDrive/colab/ALAD', subset='train'):
     maybe_download(data_dir)
     if subset=='train':
         train_data = loadmat(os.path.join(data_dir, 'svhn') + '/train_32x32.mat')

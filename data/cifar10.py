@@ -79,7 +79,7 @@ def _get_dataset(split, centered=False, normalize=False):
     Returns : 
             (tuple): <training, testing> images and labels
     '''
-    data_path = "D:/univesity/foqelisans/final_project/code/Adversarially-Learned-Anomaly-Detection/data/cifar-10-batches-py"
+    data_path = "/content/drive/MyDrive/colab/ALAD/cifar-10-batches-py"
     # dirname = "cifar-10-python.tar.gz"
     # path = "D:/univesity/foqelisans/final_project/code/Adversarially-Learned-Anomaly-Detection/data"
     # data_url = "http://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz"
