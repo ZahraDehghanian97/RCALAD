@@ -8,7 +8,11 @@ tf.disable_v2_behavior()
 import logging
 import importlib
 import sys
-import os
+import sys
+# insert at 1, 0 is the script path (or '' in REPL)
+# sys.path.insert(1, '/content/Adversarially-Learned-Anomaly-Detection/utils')
+# sys.path.insert(0, '/content/Adversarially-Learned-Anomaly-Detection/utils')
+sys.path.append('/content/Adversarially-Learned-Anomaly-Detection')
 from utils.adapt_data import batch_fill
 from utils.evaluations import save_results, heatmap
 from utils.constants import IMAGES_DATASETS
@@ -76,6 +80,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
         dataset, label))
 
     # Import model and data
+    sys.path.append('/content/Adversarially-Learned-Anomaly-Detection')
     network = importlib.import_module('alad.{}_utilities'.format(dataset))
     data = importlib.import_module("data.{}".format(dataset))
 
@@ -363,7 +368,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
     saver = tf.train.Saver(max_to_keep=2)
     save_model_secs = None if enable_early_stop else 20
-    sv = tf.train.Supervisor(logdir=logdir, save_summaries_secs=None, saver=saver, save_model_secs=save_model_secs) 
+    sv = tf.train.Supervisor(logdir=logdir, save_summaries_secs=None, saver=saver, save_model_secs=save_model_secs)
 
     logger.info('Start training...')
     with sv.managed_session(config=config) as sess:
@@ -569,6 +574,6 @@ def run(args):
                       args.enable_dzz, args.enable_sm, args.m,
                        args.enable_early_stop, args.sn)
 
-train_and_test(dataset="svhn",nb_epochs=500,degree=2,random_seed=2
+train_and_test(dataset="arrhythmia",nb_epochs=500,degree=2,random_seed=2
                ,label=1,allow_zz=True,enable_sm=True,score_method=""
                ,enable_early_stop=False,do_spectral_norm=False)

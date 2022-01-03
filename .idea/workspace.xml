@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="77b3a0d3-1246-4a71-99d6-4088611d7fca" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/arrhythmia.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/arrhythmia.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/cifar10.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/cifar10.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/kdd.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/kdd.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/svhn.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/svhn.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alad/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/alad/run.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -126,7 +122,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/alad/cifar10_utilities.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="71">
@@ -135,11 +131,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/alad/run.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="99">
-              <caret line="74" column="40" selection-start-line="74" selection-start-column="40" selection-end-line="74" selection-end-column="40" />
+            <state relative-caret-position="12460">
+              <caret line="578" column="63" selection-start-line="578" selection-start-column="63" selection-end-line="578" selection-end-column="63" />
             </state>
           </provider>
         </entry>
@@ -226,16 +222,16 @@
         <option value="$PROJECT_DIR$/alad/cifar10_utilities.py" />
         <option value="$PROJECT_DIR$/alad/arrhythmia_utilities.py" />
         <option value="$PROJECT_DIR$/alad/kdd_utilities.py" />
-        <option value="$PROJECT_DIR$/alad/run.py" />
         <option value="$PROJECT_DIR$/alad/svhn_utilities.py" />
         <option value="$PROJECT_DIR$/data/svhn.py" />
         <option value="$PROJECT_DIR$/data/cifar10.py" />
         <option value="$PROJECT_DIR$/data/arrhythmia.py" />
         <option value="$PROJECT_DIR$/data/kdd.py" />
+        <option value="$PROJECT_DIR$/alad/run.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-21" />
     <option name="y" value="102" />
     <option name="width" value="1374" />
@@ -457,17 +453,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/alad/run.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="99">
-          <caret line="74" column="40" selection-start-line="74" selection-start-column="40" selection-end-line="74" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/alad/cifar10_utilities.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="71">
           <caret line="9" selection-start-line="9" selection-end-line="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/alad/run.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="12460">
+          <caret line="578" column="63" selection-start-line="578" selection-start-column="63" selection-end-line="578" selection-end-column="63" />
         </state>
       </provider>
     </entry>
