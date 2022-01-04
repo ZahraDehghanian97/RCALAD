@@ -597,6 +597,9 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             scores_l2 += bscores_l2[:size]
             scores_fm += bscores_fm[:size]
 
+        print("print score z : \n",score_z)
+        print("print score l2 : \n", score_l2)
+        
         model = 'alad_sn{}_dzz{}'.format(do_spectral_norm, allow_zz)
         save_results(scores_z, testy, model, dataset, 'z',
                      'dzzenabled{}'.format(allow_zz), label, random_seed, step)
