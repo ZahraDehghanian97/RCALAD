@@ -1,0 +1,6 @@
+Model,Dataset,Method,Weight,Label,Step,AUROC,Precision,Recall,F1 score,Random Seed,Date
+alad_snFalse_dzzTrue,arrhythmia,z,dzzenabledTrue,1,3254,0.5,0.1415929203539823,1.0,0.24806201550387597,2,Tue Jan  4 11:33:52 2022
+alad_snFalse_dzzTrue,arrhythmia,ch,dzzenabledTrue,1,3254,0.5,0.1415929203539823,1.0,0.24806201550387597,2,Tue Jan  4 11:33:53 2022
+alad_snFalse_dzzTrue,arrhythmia,l1,dzzenabledTrue,1,3254,0.5695876288659794,0.23529411764705882,0.25,0.24242424242424243,2,Tue Jan  4 11:33:54 2022
+alad_snFalse_dzzTrue,arrhythmia,l2,dzzenabledTrue,1,3254,0.5412371134020618,0.11764705882352941,0.125,0.12121212121212122,2,Tue Jan  4 11:33:54 2022
+alad_snFalse_dzzTrue,arrhythmia,fm,dzzenabledTrue,1,3254,0.5257731958762887,0.17647058823529413,0.1875,0.1818181818181818,2,Tue Jan  4 11:33:55 2022
