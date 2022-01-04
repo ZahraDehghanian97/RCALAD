@@ -597,9 +597,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             scores_l2 += bscores_l2[:size]
             scores_fm += bscores_fm[:size]
 
-        print("print score z : \n",score_z)
-        print("print score l2 : \n", score_l2)
-        
+
         model = 'alad_sn{}_dzz{}'.format(do_spectral_norm, allow_zz)
         save_results(scores_z, testy, model, dataset, 'z',
                      'dzzenabled{}'.format(allow_zz), label, random_seed, step)
@@ -625,6 +623,6 @@ def run(args):
                        args.enable_early_stop, args.sn)
 
 
-train_and_test(dataset="arrhythmia", nb_epochs=500, degree=2, random_seed=2
+train_and_test(dataset="arrhythmia", nb_epochs=1000, degree=2, random_seed=2
                , label=1, allow_zz=True, enable_sm=True, score_method=""
                , enable_early_stop=True, do_spectral_norm=False)
