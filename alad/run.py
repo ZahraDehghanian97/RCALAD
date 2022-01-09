@@ -18,7 +18,7 @@ from utils.constants import IMAGES_DATASETS
 
 FREQ_PRINT = 200  # print frequency image tensorboard [20]
 FREQ_EV = 1
-PATIENCE = 10
+PATIENCE = 5
 
 
 def get_getter(ema):  # to update neural net with moving avg variables, suitable for ss learning cf Saliman
@@ -352,9 +352,14 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                                keep_dims=False, name='d_loss')
             score_fm = tf.squeeze(score_fm)
 
-            score_z = tf.nn.sigmoid_cross_entropy_with_logits(
+            score_z_ema = tf.nn.sigmoid_cross_entropy_with_logits(
                 labels=tf.ones_like(l_generator_emaxxzz),
                 logits=l_generator_emaxxzz)
+            score_z_ema = tf.squeeze(score_z_ema)
+
+            score_z = tf.nn.sigmoid_cross_entropy_with_logits(
+                labels=tf.ones_like(xz_logit_fake),
+                logits=xz_logit_fake)
             score_z = tf.squeeze(score_z)
 
     if enable_early_stop:
@@ -554,6 +559,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
         logger.warn('Testing evaluation...')
 
+        scores_z_ema = []
         scores_z = []
         scores_ch = []
         scores_l1 = []
@@ -571,6 +577,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             feed_dict = {x_pl: testx[ran_from:ran_to],
                          z_pl: np.random.normal(size=[batch_size, latent_dim]),
                          is_training_pl: False}
+            scores_z_ema += sess.run(score_z_ema, feed_dict=feed_dict).tolist()
             scores_z += sess.run(score_z, feed_dict=feed_dict).tolist()
             scores_ch += sess.run(score_ch, feed_dict=feed_dict).tolist()
             scores_l1 += sess.run(score_l1, feed_dict=feed_dict).tolist()
@@ -586,11 +593,13 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             feed_dict = {x_pl: batch,
                          z_pl: np.random.normal(size=[batch_size, latent_dim]),
                          is_training_pl: False}
+            bscores_z_ema = sess.run(score_z_ema, feed_dict=feed_dict).tolist()
             bscores_z = sess.run(score_z, feed_dict=feed_dict).tolist()
             bscores_ch = sess.run(score_ch, feed_dict=feed_dict).tolist()
             bscores_l1 = sess.run(score_l1, feed_dict=feed_dict).tolist()
             bscores_l2 = sess.run(score_l2, feed_dict=feed_dict).tolist()
             bscores_fm = sess.run(score_fm, feed_dict=feed_dict).tolist()
+            scores_z_ema += bscores_z_ema[:size]
             scores_z += bscores_z[:size]
             scores_ch += bscores_ch[:size]
             scores_l1 += bscores_l1[:size]
@@ -599,6 +608,8 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
 
         model = 'alad_sn{}_dzz{}'.format(do_spectral_norm, allow_zz)
+        save_results(scores_z_ema, testy, model, dataset, 'z_ema',
+                     'dzzenabled{}'.format(allow_zz), label, random_seed, step)
         save_results(scores_z, testy, model, dataset, 'z',
                      'dzzenabled{}'.format(allow_zz), label, random_seed, step)
         save_results(scores_ch, testy, model, dataset, 'ch',
