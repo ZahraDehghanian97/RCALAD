@@ -270,7 +270,7 @@ def discriminator_xxzz(x, rec_x, z, rec_z, is_training=False, getter=None, reuse
         name_z = 'zz_layer_1'
         net_z = tf.concat([z, rec_z], axis=1)
         with tf.variable_scope(name_z):
-            z = tf.layers.dense(net_z, 256, kernel_initializer=init_kernel)
+            z = tf.layers.dense(net_z, 64, kernel_initializer=init_kernel)
             z = leakyReLu(z)
             z = tf.layers.dropout(z, rate=0.5, name='dropout', training=is_training)
 
@@ -280,7 +280,7 @@ def discriminator_xxzz(x, rec_x, z, rec_z, is_training=False, getter=None, reuse
         name_y = 'y_layer_1'
         with tf.variable_scope(name_y):
             y = tf.layers.dense(y,
-                                256,
+                                128,
                                 kernel_initializer=init_kernel)
             y = leakyReLu(y)
             y = tf.layers.dropout(y, rate=0.5, name='dropout', training=is_training)
@@ -288,7 +288,7 @@ def discriminator_xxzz(x, rec_x, z, rec_z, is_training=False, getter=None, reuse
         name_y = 'y_layer_2'
         with tf.variable_scope(name_y):
             intermediate_layer = tf.layers.dense(y,
-                                                 64,
+                                                 32,
                                                  kernel_initializer=init_kernel)
         name_y = 'y_layer_3'
         with tf.variable_scope(name_y):

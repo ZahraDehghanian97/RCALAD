@@ -3,20 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="77b3a0d3-1246-4a71-99d6-4088611d7fca" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/ch/wdzzenabledTrue/histogram_2_arrhythmia.png" beforeDir="false" afterPath="$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/ch/wdzzenabledTrue/histogram_2_arrhythmia.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/ch/wdzzenabledTrue/results.csv" beforeDir="false" afterPath="$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/ch/wdzzenabledTrue/results.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/fm/wdzzenabledTrue/histogram_2_arrhythmia.png" beforeDir="false" afterPath="$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/fm/wdzzenabledTrue/histogram_2_arrhythmia.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/fm/wdzzenabledTrue/results.csv" beforeDir="false" afterPath="$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/fm/wdzzenabledTrue/results.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l1/wdzzenabledTrue/histogram_2_arrhythmia.png" beforeDir="false" afterPath="$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l1/wdzzenabledTrue/histogram_2_arrhythmia.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l1/wdzzenabledTrue/results.csv" beforeDir="false" afterPath="$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l1/wdzzenabledTrue/results.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l2/wdzzenabledTrue/histogram_2_arrhythmia.png" beforeDir="false" afterPath="$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l2/wdzzenabledTrue/histogram_2_arrhythmia.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l2/wdzzenabledTrue/results.csv" beforeDir="false" afterPath="$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l2/wdzzenabledTrue/results.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/z/wdzzenabledTrue/histogram_2_arrhythmia.png" beforeDir="false" afterPath="$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/z/wdzzenabledTrue/histogram_2_arrhythmia.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/z/wdzzenabledTrue/results.csv" beforeDir="false" afterPath="$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/z/wdzzenabledTrue/results.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/z_ema/wdzzenabledTrue/histogram_2_arrhythmia.png" beforeDir="false" afterPath="$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/z_ema/wdzzenabledTrue/histogram_2_arrhythmia.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/z_ema/wdzzenabledTrue/results.csv" beforeDir="false" afterPath="$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/z_ema/wdzzenabledTrue/results.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alad/results/results.csv" beforeDir="false" afterPath="$PROJECT_DIR$/alad/results/results.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alad/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/alad/run.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alad/arrhythmia_utilities.py" beforeDir="false" afterPath="$PROJECT_DIR$/alad/arrhythmia_utilities.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alad/results/results.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/arrhythmia.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/arrhythmia.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -131,12 +120,12 @@
     <session id="-194031801">
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="137" />
+          <entry key="py" value="329" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="137" />
+          <entry key="Python" value="329" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -163,8 +152,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/utils/evaluations.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4444">
-              <caret line="202" column="16" selection-start-line="202" selection-start-column="16" selection-end-line="202" selection-end-column="16" />
+            <state relative-caret-position="-410">
+              <caret line="178" column="21" selection-start-line="178" selection-start-column="21" selection-end-line="178" selection-end-column="21" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -172,20 +161,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/alad/run.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="143">
-              <caret line="133" column="18" lean-forward="true" selection-start-line="131" selection-start-column="4" selection-end-line="133" selection-end-column="18" />
+            <state relative-caret-position="102">
+              <caret line="303" column="25" selection-start-line="303" selection-start-column="25" selection-end-line="303" selection-end-column="25" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/alad/arrhythmia_utilities.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="6534">
-              <caret line="297" selection-start-line="297" selection-end-line="297" />
+            <state relative-caret-position="227">
+              <caret line="290" column="51" selection-start-line="290" selection-start-column="51" selection-end-line="290" selection-end-column="51" />
             </state>
           </provider>
         </entry>
@@ -193,8 +182,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/alad/cifar10_utilities.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="10032">
-              <caret line="456" column="40" selection-start-line="456" selection-start-column="27" selection-end-line="456" selection-end-column="40" />
+            <state relative-caret-position="22">
+              <caret line="460" column="30" selection-start-line="460" selection-start-column="30" selection-end-line="460" selection-end-column="30" />
             </state>
           </provider>
         </entry>
@@ -244,11 +233,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/data/arrhythmia.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1562">
-              <caret line="71" column="121" selection-start-line="71" selection-start-column="121" selection-end-line="71" selection-end-column="121" />
+            <state relative-caret-position="198">
+              <caret line="112" column="50" selection-start-line="112" selection-start-column="50" selection-end-line="112" selection-end-column="50" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
-                <marker date="1641716827421" expanded="true" signature="1692:1694" ph="..." />
+                <marker date="1641801291403" expanded="true" signature="1692:1694" ph="..." />
               </folding>
             </state>
           </provider>
@@ -274,6 +263,8 @@
       <find>dxxzz</find>
       <find>discriminator_xxzz</find>
       <find>dis_xxzz</find>
+      <find>plot</find>
+      <find>z</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -291,14 +282,14 @@
         <option value="$PROJECT_DIR$/data/kdd.py" />
         <option value="$PROJECT_DIR$/alad/cifar10_utilities.py" />
         <option value="$PROJECT_DIR$/ALAD.ipynb" />
-        <option value="$PROJECT_DIR$/data/arrhythmia.py" />
-        <option value="$PROJECT_DIR$/utils/evaluations.py" />
-        <option value="$PROJECT_DIR$/alad/arrhythmia_utilities.py" />
         <option value="$PROJECT_DIR$/alad/run.py" />
+        <option value="$PROJECT_DIR$/utils/evaluations.py" />
+        <option value="$PROJECT_DIR$/data/arrhythmia.py" />
+        <option value="$PROJECT_DIR$/alad/arrhythmia_utilities.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="-21" />
     <option name="y" value="102" />
     <option name="width" value="1374" />
@@ -324,6 +315,11 @@
               <item name="Adversarially-Learned-Anomaly-Detection_dxxzz" type="b2602c69:ProjectViewProjectNode" />
               <item name="Adversarially-Learned-Anomaly-Detection_dxxzz" type="462c0819:PsiDirectoryNode" />
               <item name="alad" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Adversarially-Learned-Anomaly-Detection_dxxzz" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Adversarially-Learned-Anomaly-Detection_dxxzz" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -390,7 +386,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24244833" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -503,30 +498,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/utils/evaluations.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4444">
-          <caret line="202" column="16" selection-start-line="202" selection-start-column="16" selection-end-line="202" selection-end-column="16" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/alad/arrhythmia_utilities.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6534">
-          <caret line="297" selection-start-line="297" selection-end-line="297" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/alad/cifar10_utilities.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="10032">
-          <caret line="456" column="40" selection-start-line="456" selection-start-column="27" selection-end-line="456" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/data/cifar10.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4224">
@@ -561,21 +532,45 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/data/arrhythmia.py">
+    <entry file="file://$PROJECT_DIR$/utils/evaluations.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1562">
-          <caret line="71" column="121" selection-start-line="71" selection-start-column="121" selection-end-line="71" selection-end-column="121" />
+        <state relative-caret-position="-410">
+          <caret line="178" column="21" selection-start-line="178" selection-start-column="21" selection-end-line="178" selection-end-column="21" />
           <folding>
-            <element signature="e#0#14#0" expanded="true" />
-            <marker date="1641716827421" expanded="true" signature="1692:1694" ph="..." />
+            <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/alad/run.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="143">
-          <caret line="133" column="18" lean-forward="true" selection-start-line="131" selection-start-column="4" selection-end-line="133" selection-end-column="18" />
+        <state relative-caret-position="102">
+          <caret line="303" column="25" selection-start-line="303" selection-start-column="25" selection-end-line="303" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/arrhythmia.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="112" column="50" selection-start-line="112" selection-start-column="50" selection-end-line="112" selection-end-column="50" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+            <marker date="1641801291403" expanded="true" signature="1692:1694" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/alad/cifar10_utilities.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="22">
+          <caret line="460" column="30" selection-start-line="460" selection-start-column="30" selection-end-line="460" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/alad/arrhythmia_utilities.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="227">
+          <caret line="290" column="51" selection-start-line="290" selection-start-column="51" selection-end-line="290" selection-end-column="51" />
         </state>
       </provider>
     </entry>

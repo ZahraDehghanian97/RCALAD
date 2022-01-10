@@ -110,6 +110,7 @@ def _get_adapted_dataset(split, scale):
     key_img = 'x_' + split
     key_lbl = 'y_' + split
     print("Size of split", split, ":", dataset[key_lbl].shape[0])
+    print("size of data : ",dataset[key_img].shape)
     return dataset[key_img], dataset[key_lbl]
 
 
