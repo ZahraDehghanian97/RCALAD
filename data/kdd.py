@@ -16,7 +16,7 @@ def get_test(label=0, scale=False, *args):
 
 def get_valid(label=0, scale=False, *args):
     """Get validation dataset for KDD 10 percent"""
-    return None
+    return _get_adapted_dataset("valid", scale)
 
 def get_shape_input():
     """Get shape of the dataset for KDD 10 percent"""
@@ -44,7 +44,8 @@ def _get_dataset(scale):
                 (?,)
     """
     col_names = _col_names()
-    df = pd.read_csv("/content/drive/MyDrive/colab/ALAD/kddcup.data_10_percent_corrected", header=None, names=col_names)
+    df = pd.read_csv("D:/univesity/foqelisans/final_project/code/Adversarially-Learned-Anomaly-Detection_dxxzz/data/kddcup.data_10_percent_corrected", header=None, names=col_names)
+    # df = pd.read_csv("/content/drive/MyDrive/colab/ALAD/kddcup.data_10_percent_corrected", header=None, names=col_names)
     text_l = ['protocol_type', 'service', 'flag', 'land', 'logged_in', 'is_host_login', 'is_guest_login']
 
     for name in text_l:
@@ -107,7 +108,7 @@ def _get_adapted_dataset(split, scale):
     if split == 'test':
         dataset[key_img], dataset[key_lbl] = _adapt_ratio(dataset[key_img],
                                                     dataset[key_lbl])
-
+    print("size of ",split," : ", dataset[key_img].shape)
     return (dataset[key_img], dataset[key_lbl])
 
 def _encode_text_dummy(df, name):

@@ -239,3 +239,72 @@ def discriminator_zz(z, rec_z, is_training=False, getter=None, reuse=False,
                                    name='fc')
 
     return logits, intermediate_layer
+
+
+
+
+def discriminator_xxzz(x, rec_x, z, rec_z, is_training=False, getter=None, reuse=False,
+                       do_spectral_norm=False):
+    """ Discriminator architecture in tensorflow
+
+    Discriminates between pairs (x, x, E(x), E(x)) and ( x , G(z),z , E(x))
+
+    Args:
+        x (tensor): input from the data space
+        rec_x (tensor): reconstructed data
+        z (tensor): input from the latent space
+        rec_z (tensor): reconstructed data
+        is_training (bool): for batch norms and dropouts
+        getter: for exponential moving average during inference
+        reuse (bool): sharing variables or not
+
+    Returns:
+        logits (tensor): last activation layer of the discriminator (shape 1)
+        intermediate_layer (tensor): intermediate layer for feature matching
+
+    """
+    with tf.variable_scope('discriminator_xxzz', reuse=reuse, custom_getter=getter):
+        # D(x,x)
+        name_x = 'xx_layer_1'
+        net_x = tf.concat([x, rec_x], axis=1)
+        with tf.variable_scope(name_x):
+            x = tf.layers.dense(net_x,
+                                units=128,
+                                kernel_initializer=init_kernel,
+                                name='fc')
+            x = tf.layers.batch_normalization(x,
+                                              training=is_training,
+                                              name='batch_normalization')
+            x = leakyReLu(x)
+
+        # D(z,z)
+        name_z = 'zz_layer_1'
+        net_z = tf.concat([z, rec_z], axis=1)
+        with tf.variable_scope(name_z):
+            z = tf.layers.dense(net_z, 32, kernel_initializer=init_kernel)
+            z = leakyReLu(z)
+            z = tf.layers.dropout(z, rate=0.5, name='dropout', training=is_training)
+
+        # D(x,x,z,z)
+        y = tf.concat([x, z], axis=1)
+
+        name_y = 'y_layer_1'
+        with tf.variable_scope(name_y):
+            y = tf.layers.dense(y,
+                                64,
+                                kernel_initializer=init_kernel)
+            y = leakyReLu(y)
+            y = tf.layers.dropout(y, rate=0.5, name='dropout', training=is_training)
+
+        name_y = 'y_layer_2'
+        with tf.variable_scope(name_y):
+            intermediate_layer = tf.layers.dense(y,
+                                                 16,
+                                                 kernel_initializer=init_kernel)
+        name_y = 'y_layer_3'
+        with tf.variable_scope(name_y):
+            logits = tf.layers.dense(y,
+                                     1,
+                                     kernel_initializer=init_kernel)
+
+    return logits, intermediate_layer
