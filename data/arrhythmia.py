@@ -84,6 +84,9 @@ def _get_dataset(scale):
         y_train = y_train.flatten().astype(int)
         y_test = y_test.flatten().astype(int)
 
+        inliers = x_train[y_train == 0], y_train[y_train == 0]
+        x_train, y_train = inliers
+
         if scale:
             print("Scaling dataset")
             scaler = MinMaxScaler()
