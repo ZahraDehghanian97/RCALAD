@@ -176,7 +176,7 @@ def save_grid_plot(samples, samples_rec, name_model, dataset, nb_images=50,
 
 def save_results(scores, true_labels, model, dataset, method, weight, label,
                  random_seed, step=-1):
-    directory = 'results/{}/{}/{}/w{}/'.format(model,
+    directory = '././results/{}/{}/{}/w{}/'.format(model,
                                                dataset,
                                                method,
                                                weight)
