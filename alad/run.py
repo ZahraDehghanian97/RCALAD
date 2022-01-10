@@ -18,7 +18,7 @@ from utils.constants import IMAGES_DATASETS
 
 FREQ_PRINT = 200  # print frequency image tensorboard [20]
 FREQ_EV = 1
-PATIENCE = 5
+PATIENCE = 10
 
 
 def get_getter(ema):  # to update neural net with moving avg variables, suitable for ss learning cf Saliman
@@ -129,7 +129,9 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     dis_xx = network.discriminator_xx
     dis_zz = network.discriminator_zz
     dis_xxzz = network.discriminator_xxzz
-
+    # tf.keras.utils.plot_model(dis_xxzz,to_file = "./dxxzz_arrhythmia.png", show_layer_names=True,
+    # rankdir='TB', show_shapes = True, expand_nested = True)
+    # print("hello")
     with tf.variable_scope('encoder_model'):
         z_gen = enc(x_pl, is_training=is_training_pl,
                     do_spectral_norm=do_spectral_norm)
