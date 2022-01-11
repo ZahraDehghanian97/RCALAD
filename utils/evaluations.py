@@ -16,6 +16,7 @@ import pandas as pd
 import time
 import matplotlib.cm as cm
 
+result_directory = ""
 IMAGES_DATASETS = ['cifar10', 'svhn']
 # import cv2
 sns.set(color_codes=True)
@@ -174,14 +175,26 @@ def save_grid_plot(samples, samples_rec, name_model, dataset, nb_images=50,
     plt.savefig('{}.png'.format(name_model))
 
 
+def plot_log(log, title):
+    global result_directory
+    plt.figure()
+    plt.plot(log)
+    plt.title(title)
+    if not os.path.exists(result_directory):
+        os.makedirs(result_directory)
+    plt.savefig(result_directory+'{}.png'.format(title))
+
+
 def save_results(scores, true_labels, model, dataset, method, weight, label,
                  random_seed, step=-1):
-    directory = '././results/{}/{}/{}/w{}/'.format(model,
-                                               dataset,
-                                               method,
-                                               weight)
+    directory = '../../results/{}/{}/{}/w{}/'.format(model,
+                                                   dataset,
+                                                   method,
+                                                   weight)
     if not os.path.exists(directory):
         os.makedirs(directory)
+    global result_directory
+    result_directory = '././results/{}/'.format(dataset)
 
     if dataset in IMAGES_DATASETS:
         file_name = "{}_step{}_rd{}".format(label, step, random_seed)

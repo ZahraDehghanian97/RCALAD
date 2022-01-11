@@ -128,7 +128,7 @@ def _to_xy(df, target):
         if x != target:
             result.append(x)
     dummies = df[target]
-    return df.as_matrix(result).astype(np.float32), dummies.as_matrix().flatten().astype(int)
+    return df[result].values.astype(np.float32), dummies.values.flatten().astype(int)
 
 def _col_names():
     """Column names of the dataframe"""

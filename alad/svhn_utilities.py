@@ -425,3 +425,92 @@ def discriminator_zz(z, rec_z, is_training=False, getter=None, reuse=False,
             logits = tf.squeeze(y)
 
     return logits, intermediate_layer
+
+
+
+def discriminator_xxzz(x, rec_x, z, rec_z, is_training=False, getter=None, reuse=False,
+                       do_spectral_norm=False):
+    """ Discriminator architecture in tensorflow
+
+    Discriminates between pairs (x, x, E(x), E(x)) and ( x , G(z),z , E(x))
+
+    Args:
+        x (tensor): input from the data space
+        rec_x (tensor): reconstructed data
+        z (tensor): input from the latent space
+        rec_z (tensor): reconstructed data
+        is_training (bool): for batch norms and dropouts
+        getter: for exponential moving average during inference
+        reuse (bool): sharing variables or not
+
+    Returns:
+        logits (tensor): last activation layer of the discriminator (shape 1)
+        intermediate_layer (tensor): intermediate layer for feature matching
+
+    """
+    with tf.variable_scope('discriminator_xxzz', reuse=reuse, custom_getter=getter):
+        # D(x,x)
+        layers = sn if do_spectral_norm else tf.layers
+
+        net = tf.concat([x, rec_x], axis=1)
+        name_net = 'xx_layer_1'
+        with tf.variable_scope(name_net):
+            net = layers.conv2d(net,
+                                filters=64,
+                                kernel_size=5,
+                                strides=2,
+                                padding='SAME',
+                                kernel_initializer=init_kernel,
+                                name='conv1')
+
+            net = leakyReLu(net, 0.2, name='conv1/leaky_relu')
+
+            net = tf.layers.dropout(net, rate=0.2, training=is_training, name='dropout')
+
+        name_net = 'layer_2'
+        with tf.variable_scope(name_net):
+            net = layers.conv2d(net,
+                                filters=128,
+                                kernel_size=5,
+                                strides=2,
+                                padding='SAME',
+                                kernel_initializer=init_kernel,
+                                name='conv2')
+            net = leakyReLu(net, 0.2, name='conv2/leaky_relu')
+
+            net = tf.layers.dropout(net, rate=0.2, training=is_training,
+                                    name='dropout')
+
+        x = tf.layers.flatten(net)
+
+        # D(z,z)
+        name_z = 'zz_layer_1'
+        net_z = tf.concat([z, rec_z], axis=1)
+        with tf.variable_scope(name_z):
+            z = tf.layers.dense(net_z, 128, kernel_initializer=init_kernel)
+            z = leakyReLu(z)
+            z = tf.layers.dropout(z, rate=0.5, name='dropout', training=is_training)
+
+        # D(x,x,z,z)
+        y = tf.concat([x, z], axis=1)
+
+        name_y = 'y_layer_1'
+        with tf.variable_scope(name_y):
+            y = tf.layers.dense(y,
+                                256,
+                                kernel_initializer=init_kernel)
+            y = leakyReLu(y)
+            y = tf.layers.dropout(y, rate=0.5, name='dropout', training=is_training)
+
+        name_y = 'y_layer_2'
+        with tf.variable_scope(name_y):
+            intermediate_layer = tf.layers.dense(y,
+                                                 64,
+                                                 kernel_initializer=init_kernel)
+        name_y = 'y_layer_3'
+        with tf.variable_scope(name_y):
+            logits = tf.layers.dense(y,
+                                     1,
+                                     kernel_initializer=init_kernel)
+
+    return logits, intermediate_layer

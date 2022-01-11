@@ -13,7 +13,7 @@ import importlib
 import sys
 # sys.path.append('/content/Adversarially-Learned-Anomaly-Detection')
 from utils.adapt_data import batch_fill
-from utils.evaluations import save_results, heatmap
+from utils.evaluations import save_results, heatmap , plot_log
 from utils.constants import IMAGES_DATASETS
 
 FREQ_PRINT = 200  # print frequency image tensorboard [20]
@@ -325,7 +325,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                                                           getter=get_getter(xx_ema),
                                                           reuse=True,
                                                           do_spectral_norm=do_spectral_norm)
-
+    log_loss_dis = []
     with tf.name_scope('Testing'):
 
         with tf.variable_scope('Scores'):
@@ -518,6 +518,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                       % (epoch, time.time() - begin, train_loss_gen,
                          train_loss_enc, train_loss_dis, train_loss_dis_xz,
                          train_loss_dis_xx, train_loss_dis_zz,train_loss_dis_xxzz))
+
             else:
                 print("Epoch %d | time = %ds | loss gen = %.4f | loss enc = %.4f | "
                       "loss dis = %.4f | loss dis xz = %.4f | loss dis xx = %.4f | loss dis xxzz = %.4f | "
@@ -525,6 +526,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                          train_loss_enc, train_loss_dis, train_loss_dis_xz,
                          train_loss_dis_xx,train_loss_dis_xxzz))
 
+            log_loss_dis.append(train_loss_dis)
             ##EARLY STOPPING
             if (epoch + 1) % FREQ_EV == 0 and enable_early_stop:
 
@@ -622,7 +624,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                      'dzzenabled{}'.format(allow_zz), label, random_seed, step)
         save_results(scores_fm, testy, model, dataset, 'fm',
                      'dzzenabled{}'.format(allow_zz), label, random_seed, step)
-
+        plot_log(log_loss_dis,"loss discriminator")
 
 
 def run(args):
@@ -636,6 +638,6 @@ def run(args):
                        args.enable_early_stop, args.sn)
 
 
-train_and_test(dataset="kdd", nb_epochs=1000, degree=2, random_seed=2
+train_and_test(dataset="arrhythmia", nb_epochs=10, degree=2, random_seed=2
                , label=1, allow_zz=True, enable_sm=True, score_method=""
                , enable_early_stop=True, do_spectral_norm=False)
