@@ -3,10 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="77b3a0d3-1246-4a71-99d6-4088611d7fca" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alad/cifar10_utilities.py" beforeDir="false" afterPath="$PROJECT_DIR$/alad/cifar10_utilities.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alad/results/arrhythmia/loss discriminator.png" beforeDir="false" afterPath="$PROJECT_DIR$/alad/results/arrhythmia/loss discriminator.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alad/results/results.csv" beforeDir="false" afterPath="$PROJECT_DIR$/alad/results/results.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/alad/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/alad/run.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alad/svhn_utilities.py" beforeDir="false" afterPath="$PROJECT_DIR$/alad/svhn_utilities.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/kdd.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/kdd.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/evaluations.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/evaluations.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/cifar10.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/cifar10.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -121,26 +122,26 @@
     <session id="-194031801">
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="893" />
+          <entry key="py" value="955" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="893" />
+          <entry key="Python" value="955" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="csv" value="1" />
-          <entry key="png" value="18" />
-          <entry key="py" value="9" />
+          <entry key="png" value="19" />
+          <entry key="py" value="13" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="CSV" value="1" />
-          <entry key="Image" value="18" />
-          <entry key="Python" value="9" />
+          <entry key="Image" value="19" />
+          <entry key="Python" value="13" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.lifecycle.project">
@@ -148,18 +149,58 @@
           <entry key="project.closed" value="1" />
           <entry key="project.open.time.0" value="1" />
           <entry key="project.open.time.11" value="1" />
-          <entry key="project.opened" value="2" />
+          <entry key="project.open.time.8" value="1" />
+          <entry key="project.opened" value="3" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/alad/run.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="58" column="26" selection-start-line="58" selection-start-column="18" selection-end-line="58" selection-end-column="26" />
+            <state relative-caret-position="164">
+              <caret line="642" column="39" selection-start-line="642" selection-start-column="39" selection-end-line="642" selection-end-column="39" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/data/cifar10.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="125">
+              <caret line="82" column="64" selection-start-line="82" selection-start-column="64" selection-end-line="82" selection-end-column="64" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/alad/svhn_utilities.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="8206">
+              <caret line="373" selection-start-line="373" selection-end-line="373" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/alad/cifar10_utilities.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="186">
+              <caret line="580" selection-start-line="580" selection-end-line="580" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/utils/evaluations.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1496">
+              <caret line="71" column="36" selection-start-line="71" selection-start-column="36" selection-end-line="71" selection-end-column="36" />
+              <folding>
+                <element signature="e#0#9#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -200,16 +241,16 @@
         <option value="$PROJECT_DIR$/alad/ALAD_Arrythmia.ipynb" />
         <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/data/svhn.py" />
-        <option value="$PROJECT_DIR$/data/cifar10.py" />
-        <option value="$PROJECT_DIR$/alad/cifar10_utilities.py" />
         <option value="$PROJECT_DIR$/ALAD.ipynb" />
         <option value="$PROJECT_DIR$/alad/arrhythmia_utilities.py" />
         <option value="$PROJECT_DIR$/data/arrhythmia.py" />
         <option value="$PROJECT_DIR$/alad/kdd_utilities.py" />
         <option value="$PROJECT_DIR$/data/kdd.py" />
         <option value="$PROJECT_DIR$/alad/svhn_utilities.py" />
-        <option value="$PROJECT_DIR$/alad/run.py" />
         <option value="$PROJECT_DIR$/utils/evaluations.py" />
+        <option value="$PROJECT_DIR$/alad/cifar10_utilities.py" />
+        <option value="$PROJECT_DIR$/alad/run.py" />
+        <option value="$PROJECT_DIR$/data/cifar10.py" />
       </list>
     </option>
   </component>
@@ -227,7 +268,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -238,12 +278,31 @@
             <path>
               <item name="Adversarially-Learned-Anomaly-Detection_dxxzz" type="b2602c69:ProjectViewProjectNode" />
               <item name="Adversarially-Learned-Anomaly-Detection_dxxzz" type="462c0819:PsiDirectoryNode" />
+              <item name="alad" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Adversarially-Learned-Anomaly-Detection_dxxzz" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Adversarially-Learned-Anomaly-Detection_dxxzz" type="462c0819:PsiDirectoryNode" />
+              <item name="alad" type="462c0819:PsiDirectoryNode" />
+              <item name="results" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Adversarially-Learned-Anomaly-Detection_dxxzz" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Adversarially-Learned-Anomaly-Detection_dxxzz" type="462c0819:PsiDirectoryNode" />
+              <item name="alad" type="462c0819:PsiDirectoryNode" />
+              <item name="results" type="462c0819:PsiDirectoryNode" />
+              <item name="arrhythmia" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Adversarially-Learned-Anomaly-Detection_dxxzz" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Adversarially-Learned-Anomaly-Detection_dxxzz" type="462c0819:PsiDirectoryNode" />
               <item name="data" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -307,12 +366,12 @@
     <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.3290938" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.3290938" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.3197158" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3197158" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -390,28 +449,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/alad/cifar10_utilities.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="22">
-          <caret line="460" column="30" selection-start-line="460" selection-start-column="30" selection-end-line="460" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/cifar10.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="192" selection-start-line="192" selection-end-line="192" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/data/arrhythmia.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2420">
           <caret line="115" column="4" selection-start-line="115" selection-start-column="4" selection-end-line="115" selection-end-column="51" />
-          <folding>
-            <element signature="e#0#14#0" expanded="true" />
-            <marker date="1641809357088" expanded="true" signature="1692:1694" ph="..." />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -429,91 +470,67 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/kdd/l2/wdzzenabledTrue/kdd_step523643_rd2roc.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/kdd/l2/wdzzenabledTrue/kdd_step523643_rd2cum_dist.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/kdd/l2/wdzzenabledTrue/histogram_2_kdd.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/kdd/l2/wdzzenabledTrue/kdd_step523643_rd2roc.png" />
+    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/kdd/l2/wdzzenabledTrue/kdd_step523643_rd2cum_dist.png" />
+    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/kdd/l2/wdzzenabledTrue/histogram_2_kdd.png" />
     <entry file="file://$PROJECT_DIR$/data/kdd.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="974">
           <caret line="52" selection-start-line="52" selection-end-line="52" />
-          <folding>
-            <element signature="e#0#14#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/kdd/l2/wdzzenabledTrue/results.csv">
-      <provider selected="true" editor-type-id="csv-text-editor" />
-      <provider editor-type-id="csv-table-editor">
-        <state showInfoPanel="true" rowLines="3" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l1/wdzzenabledTrue/histogram_2_arrhythmia.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l2/wdzzenabledTrue/arrhythmia_step59_rd2cum_dist.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l2/wdzzenabledTrue/arrhythmia_step119_rd2cum_dist.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l2/wdzzenabledTrue/histogram_2_arrhythmia.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l2/wdzzenabledTrue/arrhythmia_step179_rd2roc.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/fm/wdzzenabledTrue/loss discriminator.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l2/wdzzenabledTrue/arrhythmia_step179_rd2cum_dist.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l2/wdzzenabledTrue/arrhythmia_step119_rd2roc.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l2/wdzzenabledTrue/arrhythmia_step59_rd2roc.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l1/wdzzenabledTrue/arrhythmia_step179_rd2cum_dist.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l1/wdzzenabledTrue/arrhythmia_step179_rd2roc.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/kdd/l2/wdzzenabledTrue/results.csv" />
+    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l1/wdzzenabledTrue/histogram_2_arrhythmia.png" />
+    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l2/wdzzenabledTrue/arrhythmia_step59_rd2cum_dist.png" />
+    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l2/wdzzenabledTrue/arrhythmia_step119_rd2cum_dist.png" />
+    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l2/wdzzenabledTrue/histogram_2_arrhythmia.png" />
+    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l2/wdzzenabledTrue/arrhythmia_step179_rd2roc.png" />
+    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/fm/wdzzenabledTrue/loss discriminator.png" />
+    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l2/wdzzenabledTrue/arrhythmia_step179_rd2cum_dist.png" />
+    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l2/wdzzenabledTrue/arrhythmia_step119_rd2roc.png" />
+    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l2/wdzzenabledTrue/arrhythmia_step59_rd2roc.png" />
+    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l1/wdzzenabledTrue/arrhythmia_step179_rd2cum_dist.png" />
+    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l1/wdzzenabledTrue/arrhythmia_step179_rd2roc.png" />
+    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/loss discriminator.png" />
     <entry file="file://$PROJECT_DIR$/alad/svhn_utilities.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="480" selection-start-line="480" selection-end-line="480" />
+        <state relative-caret-position="8206">
+          <caret line="373" selection-start-line="373" selection-end-line="373" />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/loss discriminator.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/alad/results/arrhythmia/loss discriminator.png">
-      <provider selected="true" editor-type-id="images" />
     </entry>
     <entry file="file://$PROJECT_DIR$/utils/evaluations.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="137">
-          <caret line="196" column="48" selection-start-line="196" selection-start-column="48" selection-end-line="196" selection-end-column="48" />
+        <state relative-caret-position="1496">
+          <caret line="71" column="36" selection-start-line="71" selection-start-column="36" selection-end-line="71" selection-end-column="36" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/alad/results/arrhythmia/loss discriminator.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/alad/cifar10_utilities.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="186">
+          <caret line="580" selection-start-line="580" selection-end-line="580" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/alad/run.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="58" column="26" selection-start-line="58" selection-start-column="18" selection-end-line="58" selection-end-column="26" />
+        <state relative-caret-position="164">
+          <caret line="642" column="39" selection-start-line="642" selection-start-column="39" selection-end-line="642" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/cifar10.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="125">
+          <caret line="82" column="64" selection-start-line="82" selection-start-column="64" selection-end-line="82" selection-end-column="64" />
         </state>
       </provider>
     </entry>
