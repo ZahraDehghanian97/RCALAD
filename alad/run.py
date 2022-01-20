@@ -1,17 +1,16 @@
 import warnings
-
 warnings.filterwarnings('ignore')
+
 import time
 import numpy as np
 import tensorflow.compat.v1 as tf
-
 tf.disable_v2_behavior()
 import os
 # import tf_cnnvis
 import logging
 import importlib
 import sys
-# sys.path.append('/content/Adversarially-Learned-Anomaly-Detection')
+sys.path.append('/content/Adversarially-Learned-Anomaly-Detection')
 from utils.adapt_data import batch_fill
 from utils.evaluations import save_results, heatmap , plot_log
 from utils.constants import IMAGES_DATASETS
@@ -638,6 +637,6 @@ def run(args):
                        args.enable_early_stop, args.sn)
 
 
-train_and_test(dataset="cifar10", nb_epochs=500, degree=2, random_seed=2
+train_and_test(dataset="svhn", nb_epochs=200, degree=2, random_seed=2
                , label=1, allow_zz=True, enable_sm=True, score_method=""
-               , enable_early_stop=True, do_spectral_norm=False)
+               , enable_early_stop=False, do_spectral_norm=False)
