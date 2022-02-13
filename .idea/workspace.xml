@@ -142,6 +142,7 @@
       </usages-collector>
       <usages-collector id="statistics.lifecycle.project">
         <counts>
+<<<<<<< HEAD
           <entry key="project.closed" value="3" />
           <entry key="project.open.time.0" value="2" />
           <entry key="project.open.time.11" value="1" />
@@ -159,6 +160,15 @@
           <entry key="project.open.time.1" value="1" />
           <entry key="project.open.time.9" value="1" />
           <entry key="project.opened" value="3" />
+=======
+          <entry key="project.closed" value="5" />
+          <entry key="project.open.time.0" value="2" />
+          <entry key="project.open.time.1" value="1" />
+          <entry key="project.open.time.11" value="1" />
+          <entry key="project.open.time.8" value="2" />
+          <entry key="project.open.time.9" value="1" />
+          <entry key="project.opened" value="7" />
+>>>>>>> 984319e3b9b3b66b1ac6cf940f1e810a4832b37f
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
@@ -187,9 +197,54 @@
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/alad/run.py">
+<<<<<<< HEAD
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="13520">
               <caret line="632" column="33" lean-forward="true" selection-start-line="64" selection-start-column="19" selection-end-line="64" selection-end-column="27" />
+=======
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="171">
+              <caret line="112" column="41" selection-start-line="112" selection-start-column="41" selection-end-line="112" selection-end-column="41" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/data/cifar10.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1606">
+              <caret line="82" column="64" selection-start-line="82" selection-start-column="64" selection-end-line="82" selection-end-column="64" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/alad/svhn_utilities.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="8206">
+              <caret line="373" selection-start-line="373" selection-end-line="373" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/alad/cifar10_utilities.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="12760">
+              <caret line="580" selection-start-line="580" selection-end-line="580" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/utils/evaluations.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1562">
+              <caret line="71" column="36" selection-start-line="71" selection-start-column="36" selection-end-line="71" selection-end-column="36" />
+              <folding>
+                <element signature="e#0#9#0" expanded="true" />
+              </folding>
+>>>>>>> 984319e3b9b3b66b1ac6cf940f1e810a4832b37f
             </state>
           </provider>
         </entry>
@@ -262,12 +317,21 @@
         <subPane>
           <expand>
             <path>
+<<<<<<< HEAD
               <item name="Adversarially-Learned-Anomaly-Detection_dxxzz_without" type="b2602c69:ProjectViewProjectNode" />
               <item name="Adversarially-Learned-Anomaly-Detection_dxxzz_without" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="Adversarially-Learned-Anomaly-Detection_dxxzz_without" type="b2602c69:ProjectViewProjectNode" />
               <item name="Adversarially-Learned-Anomaly-Detection_dxxzz_without" type="462c0819:PsiDirectoryNode" />
+=======
+              <item name="Adversarially-Learned-Anomaly-Detection_dxxzz" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Adversarially-Learned-Anomaly-Detection_dxxzz" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Adversarially-Learned-Anomaly-Detection_dxxzz" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Adversarially-Learned-Anomaly-Detection_dxxzz" type="462c0819:PsiDirectoryNode" />
+>>>>>>> 984319e3b9b3b66b1ac6cf940f1e810a4832b37f
               <item name="alad" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
@@ -277,7 +341,11 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
+<<<<<<< HEAD
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+=======
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Adversarially-Learned-Anomaly-Detection_dxxzz_without" />
+>>>>>>> 984319e3b9b3b66b1ac6cf940f1e810a4832b37f
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunDashboard">
@@ -334,10 +402,14 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
+<<<<<<< HEAD
     <frame x="-7" y="-7" width="1295" height="695" extended-state="7" />
     <editor active="true" />
+=======
+    <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
+>>>>>>> 984319e3b9b3b66b1ac6cf940f1e810a4832b37f
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.3290938" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.3290938" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -393,10 +465,10 @@
     <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l2/wdzzenabledTrue/arrhythmia_step6826_rd2roc.png" />
     <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l2/wdzzenabledTrue/results.csv" />
     <entry file="file://$PROJECT_DIR$/data/arrhythmia.mat">
-      <provider selected="true" editor-type-id="csv-text-editor" />
       <provider editor-type-id="csv-table-editor">
         <state showInfoPanel="true" rowLines="3" />
       </provider>
+      <provider selected="true" editor-type-id="csv-text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/ALAD.ipynb">
       <provider selected="true" editor-type-id="ipnb-editor">
@@ -457,10 +529,17 @@
     <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/l1/wdzzenabledTrue/arrhythmia_step179_rd2roc.png" />
     <entry file="file://$PROJECT_DIR$/alad/results/alad_snFalse_dzzTrue/arrhythmia/loss discriminator.png" />
     <entry file="file://$PROJECT_DIR$/alad/results/results.csv">
+<<<<<<< HEAD
       <provider selected="true" editor-type-id="csv-text-editor" />
       <provider editor-type-id="csv-table-editor">
         <state showInfoPanel="true" rowLines="3" />
       </provider>
+=======
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" rowLines="3" />
+      </provider>
+      <provider selected="true" editor-type-id="csv-text-editor" />
+>>>>>>> 984319e3b9b3b66b1ac6cf940f1e810a4832b37f
     </entry>
     <entry file="file://$PROJECT_DIR$/alad/results/kdd/loss discriminator.png">
       <provider selected="true" editor-type-id="images" />
@@ -468,23 +547,25 @@
     <entry file="file://$PROJECT_DIR$/alad/results/arrhythmia/loss discriminator.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/alad/svhn_utilities.py">
+=======
+    <entry file="file://$PROJECT_DIR$/alad/run.py">
+>>>>>>> 984319e3b9b3b66b1ac6cf940f1e810a4832b37f
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8206">
-          <caret line="373" selection-start-line="373" selection-end-line="373" />
+        <state relative-caret-position="171">
+          <caret line="112" column="41" selection-start-line="112" selection-start-column="41" selection-end-line="112" selection-end-column="41" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/utils/evaluations.py">
+    <entry file="file://$PROJECT_DIR$/data/cifar10.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1496">
-          <caret line="71" column="36" selection-start-line="71" selection-start-column="36" selection-end-line="71" selection-end-column="36" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="1606">
+          <caret line="82" column="64" selection-start-line="82" selection-start-column="64" selection-end-line="82" selection-end-column="64" />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/data/cifar10.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="288">
@@ -510,6 +591,29 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="13520">
           <caret line="632" column="33" lean-forward="true" selection-start-line="64" selection-start-column="19" selection-end-line="64" selection-end-column="27" />
+=======
+    <entry file="file://$PROJECT_DIR$/alad/svhn_utilities.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="8206">
+          <caret line="373" selection-start-line="373" selection-end-line="373" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/alad/cifar10_utilities.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="12760">
+          <caret line="580" selection-start-line="580" selection-end-line="580" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/evaluations.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1562">
+          <caret line="71" column="36" selection-start-line="71" selection-start-column="36" selection-end-line="71" selection-end-column="36" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+>>>>>>> 984319e3b9b3b66b1ac6cf940f1e810a4832b37f
         </state>
       </provider>
     </entry>

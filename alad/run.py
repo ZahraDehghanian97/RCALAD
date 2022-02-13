@@ -638,6 +638,6 @@ def run(args):
                        args.enable_early_stop, args.sn)
 
 
-train_and_test(dataset="arrythmia", nb_epochs=500, degree=2, random_seed=2
-               , label=1, allow_zz=False, enable_sm=True, score_method=""
+train_and_test(dataset="arrhythmia", nb_epochs=500, degree=2, random_seed=2
+               , label=1, allow_zz=True, enable_sm=True, score_method=""
                , enable_early_stop=False, do_spectral_norm=False)
