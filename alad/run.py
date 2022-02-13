@@ -218,11 +218,16 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             logits=z_logit_real, labels=tf.zeros_like(z_logit_real))
         z_fake_gen = tf.nn.sigmoid_cross_entropy_with_logits(
             logits=z_logit_fake, labels=tf.ones_like(z_logit_fake))
+        xz_real_gen = tf.nn.sigmoid_cross_entropy_with_logits(
+            logits=xz_logit_real, labels=tf.zeros_like(xz_logit_real))
+        xz_fake_gen = tf.nn.sigmoid_cross_entropy_with_logits(
+            logits=xz_logit_fake, labels=tf.ones_like(xz_logit_fake))
 
         cost_x = tf.reduce_mean(x_real_gen + x_fake_gen)
         cost_z = tf.reduce_mean(z_real_gen + z_fake_gen)
+        cost_xz = tf.reduce_mean(xz_real_gen + xz_fake_gen)
 
-        cycle_consistency_loss = cost_x + cost_z if allow_zz else cost_x
+        cycle_consistency_loss = cost_x + cost_z + cost_xz if allow_zz else cost_x + cost_xz
         loss_generator = gen_loss_xz + cycle_consistency_loss
         loss_encoder = enc_loss_xz + cycle_consistency_loss
 
@@ -638,6 +643,6 @@ def run(args):
                        args.enable_early_stop, args.sn)
 
 
-train_and_test(dataset="kdd", nb_epochs=500, degree=2, random_seed=2
+train_and_test(dataset="arrythmia", nb_epochs=500, degree=2, random_seed=2
                , label=1, allow_zz=True, enable_sm=True, score_method=""
                , enable_early_stop=False, do_spectral_norm=False)
