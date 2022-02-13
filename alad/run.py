@@ -112,7 +112,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     trainx_copy = trainx.copy()
     if enable_early_stop: validx, validy = data.get_valid(label)
     testx, testy = data.get_test(label)
-    print(testy.shape)
+    print(trainx.shape)
     rng = np.random.RandomState(random_seed)
     nr_batches_train = int(trainx.shape[0] / batch_size)
     nr_batches_test = int(testx.shape[0] / batch_size)
