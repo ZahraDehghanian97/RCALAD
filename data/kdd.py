@@ -44,8 +44,8 @@ def _get_dataset(scale):
                 (?,)
     """
     col_names = _col_names()
-    # df = pd.read_csv("D:/univesity/foqelisans/final_project/code/Adversarially-Learned-Anomaly-Detection_dxxzz/data/kddcup.data_10_percent_corrected", header=None, names=col_names)
-    df = pd.read_csv("/content/drive/MyDrive/colab/ALAD/kddcup.data_10_percent_corrected", header=None, names=col_names)
+    df = pd.read_csv("D:/univesity/foqelisans/final_project/code/Adversarially-Learned-Anomaly-Detection_dxxzz/data/kddcup.data_10_percent_corrected", header=None, names=col_names)
+    # df = pd.read_csv("/content/drive/MyDrive/colab/ALAD/kddcup.data_10_percent_corrected", header=None, names=col_names)
     text_l = ['protocol_type', 'service', 'flag', 'land', 'logged_in', 'is_host_login', 'is_guest_login']
 
     for name in text_l:

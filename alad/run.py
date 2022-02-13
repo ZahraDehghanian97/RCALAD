@@ -203,7 +203,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
         dis_loss_xxzz = tf.reduce_mean(xz_real_dis + xz_fake_dis)
 
         loss_discriminator = dis_loss_xz + dis_loss_xx + dis_loss_zz + dis_loss_xxzz if \
-            allow_zz else dis_loss_xz + dis_loss_xx
+            allow_zz else dis_loss_xz + dis_loss_xx + dis_loss_xxzz
 
         # generator and encoder
         gen_loss_xz = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
@@ -638,6 +638,6 @@ def run(args):
                        args.enable_early_stop, args.sn)
 
 
-train_and_test(dataset="arrhythmia", nb_epochs=500, degree=2, random_seed=2
+train_and_test(dataset="kdd", nb_epochs=500, degree=2, random_seed=2
                , label=1, allow_zz=True, enable_sm=True, score_method=""
                , enable_early_stop=False, do_spectral_norm=False)
