@@ -56,7 +56,7 @@ def create_logdir(dataset, label, rd,
                   allow_zz, score_method, do_spectral_norm):
     """ Directory to save training logs, weights, biases, etc."""
     model = 'alad_sn{}_dzz{}'.format(do_spectral_norm, allow_zz)
-    return "../../train_logs/{}/{}/dzzenabled{}/{}/label{}/" \
+    return "../../train_logs/{}_{}_dzzenabled{}_{}_label{}" \
            "rd{}".format(dataset, model, allow_zz,
                          score_method, label, rd)
 
@@ -418,7 +418,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                            do_spectral_norm)
 
     saver = tf.train.Saver(max_to_keep=2)
-    save_model_secs = None if enable_early_stop else 20
+    save_model_secs = None # if enable_early_stop else 20
     sv = tf.train.Supervisor(logdir=logdir, save_summaries_secs=None, saver=saver, save_model_secs=save_model_secs)
 
     logger.info('Start training...')
@@ -487,7 +487,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
                 if enable_sm:
                     sm = sess.run(sum_op, feed_dict=feed_dict)
-                    writer.add_summary(sm, step)
+                    # writer.add_summary(sm, step)
 
                     if t % FREQ_PRINT == 0 and dataset in IMAGES_DATASETS:  # inspect reconstruction
                         t = np.random.randint(0, trainx.shape[0] - batch_size)
@@ -498,7 +498,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                                          size=[batch_size, latent_dim]),
                                      is_training_pl: False}
                         sm = sess.run(sum_op_im, feed_dict=feed_dict)
-                        writer.add_summary(sm, step)  # train_batch)
+                        # writer.add_summary(sm, step)  # train_batch)
 
                 train_batch += 1
 
@@ -539,14 +539,14 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
                 if enable_sm:
                     sm = sess.run(sum_op_valid, feed_dict=feed_dict)
-                    writer.add_summary(sm, step)  # train_batch)
+                    # writer.add_summary(sm, step)  # train_batch)
 
                 logger.info('Validation: valid loss {:.4f}'.format(valid_loss))
 
                 if (valid_loss < best_valid_loss or epoch == FREQ_EV - 1):
                     best_valid_loss = valid_loss
                     logger.info("Best model - valid loss = {:.4f} - saving...".format(best_valid_loss))
-                    sv.saver.save(sess, logdir + '/model.ckpt', global_step=step)
+                    # sv.saver.save(sess, logdir + '/model.ckpt', global_step=step)
                     nb_without_improvements = 0
                 else:
                     nb_without_improvements += FREQ_EV
@@ -559,7 +559,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
             epoch += 1
 
-        sv.saver.save(sess, logdir + '/model.ckpt', global_step=step)
+        # sv.saver.save(sess, logdir + '/model.ckpt', global_step=step)
 
         logger.warn('Testing evaluation...')
 
