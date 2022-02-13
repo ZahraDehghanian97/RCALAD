@@ -1,5 +1,4 @@
 import warnings
-
 warnings.filterwarnings('ignore')
 import time
 import numpy as np
@@ -7,7 +6,6 @@ import tensorflow.compat.v1 as tf
 
 tf.disable_v2_behavior()
 import os
-# import tf_cnnvis
 import logging
 import importlib
 import sys
@@ -26,7 +24,6 @@ def get_getter(ema):  # to update neural net with moving avg variables, suitable
         var = getter(name, *args, **kwargs)
         ema_var = ema.average(var)
         return ema_var if ema_var else var
-
     return ema_getter
 
 
@@ -82,8 +79,6 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
      """
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True
-    logger = logging.getLogger("ALAD.run.{}.{}".format(
-        dataset, label))
 
     # Import model and data
     sys.path.append('/content/Adversarially-Learned-Anomaly-Detection')
@@ -99,15 +94,13 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     global_step = tf.Variable(0, name='global_step', trainable=False)
 
     # Placeholders
-    x_pl = tf.placeholder(tf.float32, shape=data.get_shape_input(),
-                          name="input_x")
-    z_pl = tf.placeholder(tf.float32, shape=[None, latent_dim],
-                          name="input_z")
+    x_pl = tf.placeholder(tf.float32, shape=data.get_shape_input(),name="input_x")
+    z_pl = tf.placeholder(tf.float32, shape=[None, latent_dim], name="input_z")
     is_training_pl = tf.placeholder(tf.bool, [], name='is_training_pl')
     learning_rate = tf.placeholder(tf.float32, shape=(), name="lr_pl")
 
     # Data
-    logger.info('Data loading...')
+    print('Data loading...')
     trainx, trainy = data.get_train(label)
     trainx_copy = trainx.copy()
     if enable_early_stop: validx, validy = data.get_valid(label)
@@ -117,9 +110,8 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     nr_batches_train = int(trainx.shape[0] / batch_size)
     nr_batches_test = int(testx.shape[0] / batch_size)
 
-    logger.info('Building graph...')
-
-    logger.warn("ALAD is training with the following parameters:")
+    print('Building graph...')
+    print("ALAD is training with the following parameters:")
     display_parameters(batch_size, starting_lr, ema_decay, degree, label,
                        allow_zz, score_method, do_spectral_norm)
 
@@ -129,9 +121,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     dis_xx = network.discriminator_xx
     dis_zz = network.discriminator_zz
     dis_xxzz = network.discriminator_xxzz
-    # tf.keras.utils.plot_model(dis_xxzz,to_file = "./dxxzz_arrhythmia.png", show_layer_names=True,
-    # rankdir='TB', show_shapes = True, expand_nested = True)
-    # print("hello")
+
     with tf.variable_scope('encoder_model'):
         z_gen = enc(x_pl, is_training=is_training_pl,
                     do_spectral_norm=do_spectral_norm)
@@ -225,7 +215,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
         cost_x = tf.reduce_mean(x_real_gen + x_fake_gen)
         cost_z = tf.reduce_mean(z_real_gen + z_fake_gen)
-        cost_xz = tf.reduce_mean(xz_real_gen + xz_fake_gen)
+        cost_xz = 0 #tf.reduce_mean(xz_real_gen + xz_fake_gen)
 
         cycle_consistency_loss = cost_x + cost_z + cost_xz if allow_zz else cost_x + cost_xz
         loss_generator = gen_loss_xz + cycle_consistency_loss
@@ -372,53 +362,6 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     if enable_early_stop:
         rec_error_valid = tf.reduce_mean(score_fm)
 
-    if enable_sm:
-
-        with tf.name_scope('summary'):
-            with tf.name_scope('dis_summary'):
-                tf.summary.scalar('loss_discriminator', loss_discriminator, ['dis'])
-                tf.summary.scalar('loss_dis_encoder', loss_dis_enc, ['dis'])
-                tf.summary.scalar('loss_dis_gen', loss_dis_gen, ['dis'])
-                tf.summary.scalar('loss_dis_xz', dis_loss_xz, ['dis'])
-                tf.summary.scalar('loss_dis_xx', dis_loss_xx, ['dis'])
-                tf.summary.scalar('loss_dis_xxzz', dis_loss_xxzz, ['dis'])
-                if allow_zz:
-                    tf.summary.scalar('loss_dis_zz', dis_loss_zz, ['dis'])
-
-            with tf.name_scope('gen_summary'):
-                tf.summary.scalar('loss_generator', loss_generator, ['gen'])
-                tf.summary.scalar('loss_encoder', loss_encoder, ['gen'])
-                tf.summary.scalar('loss_encgen_dxx', cost_x, ['gen'])
-                if allow_zz:
-                    tf.summary.scalar('loss_encgen_dzz', cost_z, ['gen'])
-
-            if enable_early_stop:
-                with tf.name_scope('validation_summary'):
-                    tf.summary.scalar('valid', rec_error_valid, ['v'])
-
-            with tf.name_scope('img_summary'):
-                heatmap_pl_latent = tf.placeholder(tf.float32,
-                                                   shape=(1, 480, 640, 3),
-                                                   name="heatmap_pl_latent")
-                sum_op_latent = tf.summary.image('heatmap_latent', heatmap_pl_latent)
-
-            if dataset in IMAGES_DATASETS:
-                with tf.name_scope('image_summary'):
-                    tf.summary.image('reconstruct', rec_x, 8, ['image'])
-                    tf.summary.image('input_images', x_pl, 8, ['image'])
-
-            else:
-                heatmap_pl_rec = tf.placeholder(tf.float32, shape=(1, 480, 640, 3),
-                                                name="heatmap_pl_rec")
-                with tf.name_scope('image_summary'):
-                    tf.summary.image('heatmap_rec', heatmap_pl_rec, 1, ['image'])
-
-            sum_op_dis = tf.summary.merge_all('dis')
-            sum_op_gen = tf.summary.merge_all('gen')
-            sum_op = tf.summary.merge([sum_op_dis, sum_op_gen])
-            sum_op_im = tf.summary.merge_all('image')
-            sum_op_valid = tf.summary.merge_all('v')
-
     logdir = create_logdir(dataset, label, random_seed, allow_zz, score_method,
                            do_spectral_norm)
 
@@ -426,12 +369,12 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     save_model_secs = None # if enable_early_stop else 20
     sv = tf.train.Supervisor(logdir=logdir, save_summaries_secs=None, saver=saver, save_model_secs=save_model_secs)
 
-    logger.info('Start training...')
+    print('Start training...')
     with sv.managed_session(config=config) as sess:
 
         step = sess.run(global_step)
-        logger.info('Initialization done at step {}'.format(step / nr_batches_train))
-        writer = tf.summary.FileWriter(logdir, sess.graph)
+        print('Initialization done at step {}'.format(step / nr_batches_train))
+        # writer = tf.summary.FileWriter(logdir, sess.graph)
         train_batch = 0
         epoch = 0
         best_valid_loss = 0
@@ -490,21 +433,6 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                 train_loss_gen += lg
                 train_loss_enc += le
 
-                if enable_sm:
-                    sm = sess.run(sum_op, feed_dict=feed_dict)
-                    # writer.add_summary(sm, step)
-
-                    if t % FREQ_PRINT == 0 and dataset in IMAGES_DATASETS:  # inspect reconstruction
-                        t = np.random.randint(0, trainx.shape[0] - batch_size)
-                        ran_from = t
-                        ran_to = t + batch_size
-                        feed_dict = {x_pl: trainx[ran_from:ran_to],
-                                     z_pl: np.random.normal(
-                                         size=[batch_size, latent_dim]),
-                                     is_training_pl: False}
-                        sm = sess.run(sum_op_im, feed_dict=feed_dict)
-                        # writer.add_summary(sm, step)  # train_batch)
-
                 train_batch += 1
 
             train_loss_gen /= nr_batches_train
@@ -515,7 +443,6 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             train_loss_dis_zz /= nr_batches_train
             train_loss_dis_xxzz /= nr_batches_train
 
-            logger.info('Epoch terminated')
             if allow_zz:
                 print("Epoch %d | time = %ds | loss gen = %.4f | loss enc = %.4f | "
                       "loss dis = %.4f | loss dis xz = %.4f | loss dis xx = %.4f | "
@@ -542,15 +469,11 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                 vl, lat = sess.run([rec_error_valid, rec_z], feed_dict=feed_dict)
                 valid_loss += vl
 
-                if enable_sm:
-                    sm = sess.run(sum_op_valid, feed_dict=feed_dict)
-                    # writer.add_summary(sm, step)  # train_batch)
-
-                logger.info('Validation: valid loss {:.4f}'.format(valid_loss))
+                print('Validation: valid loss {:.4f}'.format(valid_loss))
 
                 if (valid_loss < best_valid_loss or epoch == FREQ_EV - 1):
                     best_valid_loss = valid_loss
-                    logger.info("Best model - valid loss = {:.4f} - saving...".format(best_valid_loss))
+                    print("Best model - valid loss = {:.4f} - saving...".format(best_valid_loss))
                     # sv.saver.save(sess, logdir + '/model.ckpt', global_step=step)
                     nb_without_improvements = 0
                 else:
@@ -558,7 +481,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
                 if nb_without_improvements > PATIENCE:
                     sv.request_stop()
-                    logger.warning(
+                    print(
                         "Early stopping at epoch {} with weights from epoch {}".format(
                             epoch, epoch - nb_without_improvements))
 
@@ -566,8 +489,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
         # sv.saver.save(sess, logdir + '/model.ckpt', global_step=step)
 
-        logger.warn('Testing evaluation...')
-
+        print('Testing evaluation...')
         scores_z_ema = []
         scores_z = []
         scores_ch = []
@@ -595,7 +517,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             inference_time.append(time.time() - begin_test_time_batch)
 
         inference_time = np.mean(inference_time)
-        logger.info('Testing : mean inference time is %.4f' % (inference_time))
+        print('Testing : mean inference time is %.4f' % (inference_time))
 
         if testx.shape[0] % batch_size != 0:
             batch, size = batch_fill(testx, batch_size)
@@ -643,6 +565,6 @@ def run(args):
                        args.enable_early_stop, args.sn)
 
 
-train_and_test(dataset="arrythmia", nb_epochs=500, degree=2, random_seed=2
+train_and_test(dataset="arrhythmia", nb_epochs=1000, degree=2, random_seed=2
                , label=1, allow_zz=True, enable_sm=True, score_method=""
                , enable_early_stop=False, do_spectral_norm=False)
