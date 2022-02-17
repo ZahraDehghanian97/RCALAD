@@ -4,11 +4,13 @@ warnings.filterwarnings('ignore')
 import time
 import numpy as np
 import tensorflow.compat.v1 as tf
-
 tf.disable_v2_behavior()
 import os
 import importlib
 import sys
+
+
+pd.set_option('display.max_columns', 500)
 
 sys.path.append('/content/Adversarially-Learned-Anomaly-Detection')
 from utils.adapt_data import batch_fill
@@ -569,16 +571,16 @@ def run(args):
 def describe_result(type_score,results):
     print("Describe Result for ",type_score," scoring")
     df_results = pd.DataFrame(results,columns=['precision','recall','f1','roc_auc'])
-    print(df_results.describe())
+    print(df_results.describe(include='all')[1:3])
     print("-------------------------------------------")
 
 
 results_z_ema, results_z, results_ch, results_l1, results_l2, results_fm = [],[],[],[],[],[]
-for random_seed in range(20):
+for random_seed in range(10):
     tf.reset_default_graph()
     tf.Graph().as_default()
     result_z_ema, result_z, result_ch, result_l1, result_l2, result_fm = \
-        train_and_test(dataset="arrhythmia", nb_epochs=1000, degree=2, random_seed=random_seed
+        train_and_test(dataset="arrhythmia", nb_epochs=1000, degree=2, random_seed=2
                        , label=1, allow_zz=True, enable_sm=True, score_method=""
                        , enable_early_stop=False, do_spectral_norm=False)
     results_z_ema.append(result_z_ema)
