@@ -98,7 +98,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     latent_dim = network.latent_dim
     ema_decay = 0.999
 
-    # global_step = tf.Variable(0, name='global_step', trainable=False)
+    global_step = tf.Variable(0, name='global_step', trainable=False)
 
     # Placeholders
     x_pl = tf.placeholder(tf.float32, shape=data.get_shape_input(), name="input_x")
@@ -379,7 +379,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     print('Start training...')
     with sv.managed_session(config=config) as sess:
 
-        # step = sess.run(global_step)
+        step = sess.run(global_step)
         # print('Initialization done at step {}'.format(step / nr_batches_train))
         # writer = tf.summary.FileWriter(logdir, sess.graph)
         train_batch = 0
@@ -582,7 +582,7 @@ results_z_ema, results_z, results_ch, results_l1, results_l2, results_fm = [],[]
 for random_seed in range(20):
     print("===========================================")
     print("start round ",random_seed)
-    tf.backend.clear_session()
+    tf.keras.backend.clear_session()
     tf.reset_default_graph()
     tf.Graph().as_default()
     tf.set_random_seed(random_seed)
