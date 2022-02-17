@@ -22,7 +22,7 @@ IMAGES_DATASETS = ['cifar10', 'svhn']
 sns.set(color_codes=True)
 
 
-def do_roc(scores, true_labels, file_name='', directory='', plot=True):
+def do_roc(scores, true_labels, file_name='', directory='', plot=False):
     """ Does the ROC curve
 
     Args:
@@ -187,29 +187,30 @@ def plot_log(log, title):
 
 def save_results(scores, true_labels, model, dataset, method, weight, label,
                  random_seed, step=-1):
-    directory = '../../results/{}/{}/{}/w{}/'.format(model,
-                                                   dataset,
-                                                   method,
-                                                   weight)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    global result_directory
-    result_directory = '././results/{}/'.format(dataset)
+    # directory = '../../results/{}/{}/{}/w{}/'.format(model,
+    #                                                dataset,
+    #                                                method,
+    #                                                weight)
+    # if not os.path.exists(directory):
+    #     os.makedirs(directory)
+    # global result_directory
+    # result_directory = '././results/{}/'.format(dataset)
+    #
+    # if dataset in IMAGES_DATASETS:
+    #     file_name = "{}_step{}_rd{}".format(label, step, random_seed)
+    #     fname = directory + "{}.csv".format(label)
+    # else:
+    #     file_name = "{}_step{}_rd{}".format(dataset, step, random_seed)
+    #     fname = directory + "results.csv"
 
-    if dataset in IMAGES_DATASETS:
-        file_name = "{}_step{}_rd{}".format(label, step, random_seed)
-        fname = directory + "{}.csv".format(label)
-    else:
-        file_name = "{}_step{}_rd{}".format(dataset, step, random_seed)
-        fname = directory + "results.csv"
-
+    file_name = ''
+    directory = ''
     scores = np.array(scores)
-    roc_auc = do_roc(scores, true_labels, file_name=file_name,
-                     directory=directory)
-    do_cumdist(scores, file_name=file_name, directory=directory)
-    do_hist(scores, true_labels, directory, dataset, random_seed)
-    if np.max(true_labels) > 1:
-        do_hists(scores, true_labels, directory, dataset, random_seed)
+    roc_auc = do_roc(scores, true_labels, file_name=file_name,directory=directory)
+    # do_cumdist(scores, file_name=file_name, directory=directory)
+    # do_hist(scores, true_labels, directory, dataset, random_seed)
+    # if np.max(true_labels) > 1:
+    #     do_hists(scores, true_labels, directory, dataset, random_seed)
 
     per = get_percentile(scores, dataset)
     y_pred = (scores >= per)
@@ -231,9 +232,9 @@ def save_results(scores, true_labels, model, dataset, method, weight, label,
                step, roc_auc, precision, recall, f1, random_seed, time.ctime()]
     save_results_csv("results/results.csv", results, header=0)
 
-    results = [step, roc_auc, precision, recall, f1, random_seed]
-    save_results_csv(fname, results, header=2)
-
+    # results = [step, roc_auc, precision, recall, f1, random_seed]
+    # save_results_csv(fname, results, header=2)
+    return [precision,recall,f1,roc_auc]
 
 def heatmap(data, name=None, save=False):
     fig = plt.figure()
