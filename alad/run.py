@@ -5,7 +5,9 @@ import time
 import numpy as np
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
+tf.logging.set_verbosity(tf.logging.ERROR)
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import importlib
 import sys
 
@@ -32,17 +34,18 @@ def get_getter(ema):  # to update neural net with moving avg variables, suitable
 
 
 def display_parameters(batch_size, starting_lr, ema_decay, degree, label,
-                       allow_zz, score_method, do_spectral_norm):
+                       allow_zz, score_method, do_spectral_norm,nb_epochs):
     """See parameters
     """
+    print("Number of Epochs: ",nb_epochs)
     print('Batch size: ', batch_size)
-    print('Starting learning rate: ', starting_lr)
-    print('EMA Decay: ', ema_decay)
+    # print('Starting learning rate: ', starting_lr)
+    # print('EMA Decay: ', ema_decay)
     print('Degree for L norms: ', degree)
-    print('Anomalous label: ', label)
-    print('Score method: ', score_method)
+    # print('Anomalous label: ', label)
+    # print('Score method: ', score_method)
     print('Discriminator zz enabled: ', allow_zz)
-    print('Spectral Norm enabled: ', do_spectral_norm)
+    # print('Spectral Norm enabled: ', do_spectral_norm)
 
 
 def display_progression_epoch(j, id_max):
@@ -117,7 +120,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     print('Building graph...')
     print("ALAD is training with the following parameters:")
     display_parameters(batch_size, starting_lr, ema_decay, degree, label,
-                       allow_zz, score_method, do_spectral_norm)
+                       allow_zz, score_method, do_spectral_norm,nb_epochs)
 
     gen = network.decoder
     enc = network.encoder
@@ -446,20 +449,20 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             train_loss_dis_zz /= nr_batches_train
             train_loss_dis_xxzz /= nr_batches_train
 
-            if allow_zz:
-                print("Epoch %d | time = %ds | loss gen = %.4f | loss enc = %.4f | "
-                      "loss dis = %.4f | loss dis xz = %.4f | loss dis xx = %.4f | "
-                      "loss dis zz = %.4f | loss dis xxzz = %.4f |"
-                      % (epoch, time.time() - begin, train_loss_gen,
-                         train_loss_enc, train_loss_dis, train_loss_dis_xz,
-                         train_loss_dis_xx, train_loss_dis_zz, train_loss_dis_xxzz))
+            # if allow_zz:
+            #     print("Epoch %d | time = %ds | loss gen = %.4f | loss enc = %.4f | "
+            #           "loss dis = %.4f | loss dis xz = %.4f | loss dis xx = %.4f | "
+            #           "loss dis zz = %.4f | loss dis xxzz = %.4f |"
+            #           % (epoch, time.time() - begin, train_loss_gen,
+            #              train_loss_enc, train_loss_dis, train_loss_dis_xz,
+            #              train_loss_dis_xx, train_loss_dis_zz, train_loss_dis_xxzz))
 
-            else:
-                print("Epoch %d | time = %ds | loss gen = %.4f | loss enc = %.4f | "
-                      "loss dis = %.4f | loss dis xz = %.4f | loss dis xx = %.4f | loss dis xxzz = %.4f | "
-                      % (epoch, time.time() - begin, train_loss_gen,
-                         train_loss_enc, train_loss_dis, train_loss_dis_xz,
-                         train_loss_dis_xx, train_loss_dis_xxzz))
+            # else:
+            #     print("Epoch %d | time = %ds | loss gen = %.4f | loss enc = %.4f | "
+            #           "loss dis = %.4f | loss dis xz = %.4f | loss dis xx = %.4f | loss dis xxzz = %.4f | "
+            #           % (epoch, time.time() - begin, train_loss_gen,
+            #              train_loss_enc, train_loss_dis, train_loss_dis_xz,
+            #              train_loss_dis_xx, train_loss_dis_xxzz))
 
             log_loss_dis.append(train_loss_dis)
             ##EARLY STOPPING
@@ -577,10 +580,13 @@ def describe_result(type_score,results):
 
 results_z_ema, results_z, results_ch, results_l1, results_l2, results_fm = [],[],[],[],[],[]
 for random_seed in range(10):
+    print("===========================================")
+    print("start round ",random_seed)
     tf.reset_default_graph()
     tf.Graph().as_default()
+    tf.set_random_seed(2)
     result_z_ema, result_z, result_ch, result_l1, result_l2, result_fm = \
-        train_and_test(dataset="arrhythmia", nb_epochs=1000, degree=2, random_seed=2
+        train_and_test(dataset="arrhythmia", nb_epochs=10, degree=2, random_seed=2
                        , label=1, allow_zz=True, enable_sm=True, score_method=""
                        , enable_early_stop=False, do_spectral_norm=False)
     results_z_ema.append(result_z_ema)
