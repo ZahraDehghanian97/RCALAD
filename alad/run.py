@@ -579,15 +579,15 @@ def describe_result(type_score,results):
 
 
 results_z_ema, results_z, results_ch, results_l1, results_l2, results_fm = [],[],[],[],[],[]
-for random_seed in range(20):
+for random_seed in range(10):
     print("===========================================")
     print("start round ",random_seed)
     tf.keras.backend.clear_session()
     tf.reset_default_graph()
     tf.Graph().as_default()
-    tf.set_random_seed(random_seed)
+    # tf.set_random_seed(random_seed)
     result_z_ema, result_z, result_ch, result_l1, result_l2, result_fm = \
-        train_and_test(dataset="arrhythmia", nb_epochs=1000, degree=2, random_seed=random_seed
+        train_and_test(dataset="arrhythmia", nb_epochs=1000, degree=2, random_seed=2
                        , label=1, allow_zz=True, enable_sm=True, score_method=""
                        , enable_early_stop=False, do_spectral_norm=False)
     results_z_ema.append(result_z_ema)
