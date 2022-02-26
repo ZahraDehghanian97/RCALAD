@@ -287,10 +287,11 @@ def discriminator_xxzz(x, rec_x, z, rec_z, is_training=False, getter=None, reuse
 
         name_y = 'y_layer_2'
         with tf.variable_scope(name_y):
-            intermediate_layer = tf.layers.dense(y,
-                                                 32,
-                                                 kernel_initializer=init_kernel)
+            y = tf.layers.dense(y,
+                                32,
+                                kernel_initializer=init_kernel)
         name_y = 'y_layer_3'
+        intermediate_layer = y
         with tf.variable_scope(name_y):
             logits = tf.layers.dense(y,
                                      1,
