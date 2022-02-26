@@ -301,6 +301,10 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                         getter=get_getter(gen_ema), reuse=True)
         x_gen_ema = gen(z_pl, is_training=is_training_pl,
                         getter=get_getter(gen_ema), reuse=True)
+    with tf.variable_scope('encoder_model'):
+        rec_z_ema = enc(x_gen_ema, is_training=is_training_pl,
+                        getter=get_getter(enc_ema), reuse=True,
+                        do_spectral_norm=do_spectral_norm)
 
     with tf.variable_scope('discriminator_model_xx'):
         l_encoder_emaxx, inter_layer_inp_emaxx = dis_xx(x_pl, x_pl,
@@ -355,6 +359,15 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             score_fm = tf.norm(fm, ord=degree, axis=1,
                                keep_dims=False, name='d_loss')
             score_fm = tf.squeeze(score_fm)
+
+            # ______________________________________________________my scores !!!
+
+            rec_z = z_pl - rec_z_ema
+            rec = tf.layers.flatten(rec)
+            score_l2_sigma = tf.norm(rec, ord=2, axis=1,
+                               keep_dims=False, name='d_loss')
+            score_l2_sigma = tf.squeeze(score_l2_sigma)
+            score_l2_sigma += score_l2
 
             fm = inter_layer_inp_xxzz - inter_layer_rct_xxzz
             fm = tf.layers.flatten(fm)
@@ -514,6 +527,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
         scores_l1 = []
         scores_l2 = []
         scores_fm = []
+        scores_l2_sigma = []
         scores_fm_xxzz = []
         scores_fm_emaxxzz = []
         inference_time = []
@@ -528,12 +542,13 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             feed_dict = {x_pl: testx[ran_from:ran_to],
                          z_pl: np.random.normal(size=[batch_size, latent_dim]),
                          is_training_pl: False}
-            scores_z_ema += sess.run(score_z_ema, feed_dict=feed_dict).tolist()
-            scores_z += sess.run(score_z, feed_dict=feed_dict).tolist()
             scores_ch += sess.run(score_ch, feed_dict=feed_dict).tolist()
             scores_l1 += sess.run(score_l1, feed_dict=feed_dict).tolist()
             scores_l2 += sess.run(score_l2, feed_dict=feed_dict).tolist()
             scores_fm += sess.run(score_fm, feed_dict=feed_dict).tolist()
+            scores_z_ema += sess.run(score_z_ema, feed_dict=feed_dict).tolist()
+            scores_z += sess.run(score_z, feed_dict=feed_dict).tolist()
+            scores_l2_sigma += sess.run(score_l2_sigma, feed_dict=feed_dict).tolist()
             scores_fm_xxzz += sess.run(score_fm_xxzz, feed_dict=feed_dict).tolist()
             scores_fm_emaxxzz += sess.run(score_fm_emaxxzz, feed_dict=feed_dict).tolist()
             inference_time.append(time.time() - begin_test_time_batch)
@@ -546,28 +561,27 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             feed_dict = {x_pl: batch,
                          z_pl: np.random.normal(size=[batch_size, latent_dim]),
                          is_training_pl: False}
-            bscores_z_ema = sess.run(score_z_ema, feed_dict=feed_dict).tolist()
-            bscores_z = sess.run(score_z, feed_dict=feed_dict).tolist()
+
             bscores_ch = sess.run(score_ch, feed_dict=feed_dict).tolist()
             bscores_l1 = sess.run(score_l1, feed_dict=feed_dict).tolist()
             bscores_l2 = sess.run(score_l2, feed_dict=feed_dict).tolist()
             bscores_fm = sess.run(score_fm, feed_dict=feed_dict).tolist()
+            bscores_l2_sigma = sess.run(score_l2_sigma, feed_dict=feed_dict).tolist()
+            bscores_z_ema = sess.run(score_z_ema, feed_dict=feed_dict).tolist()
+            bscores_z = sess.run(score_z, feed_dict=feed_dict).tolist()
             bscores_fm_xxzz = sess.run(score_fm_xxzz, feed_dict=feed_dict).tolist()
             bscores_fm_emaxxzz = sess.run(score_fm_emaxxzz, feed_dict=feed_dict).tolist()
-            scores_z_ema += bscores_z_ema[:size]
-            scores_z += bscores_z[:size]
             scores_ch += bscores_ch[:size]
             scores_l1 += bscores_l1[:size]
             scores_l2 += bscores_l2[:size]
             scores_fm += bscores_fm[:size]
+            scores_l2_sigma += bscores_l2_sigma[:size]
+            scores_z_ema += bscores_z_ema[:size]
+            scores_z += bscores_z[:size]
             scores_fm_xxzz += bscores_fm_xxzz[:size]
             scores_fm_emaxxzz += bscores_fm_emaxxzz[:size]
 
         model = 'alad_sn{}_dzz{}'.format(do_spectral_norm, allow_zz)
-        result_z_ema = save_results(scores_z_ema, testy, model, dataset, 'z_ema',
-                                    'dzzenabled{}'.format(allow_zz), label, random_seed, step)
-        result_z = save_results(scores_z, testy, model, dataset, 'z',
-                                'dzzenabled{}'.format(allow_zz), label, random_seed, step)
         result_ch = save_results(scores_ch, testy, model, dataset, 'ch',
                                  'dzzenabled{}'.format(allow_zz), label, random_seed, step)
         result_l1 = save_results(scores_l1, testy, model, dataset, 'l1',
@@ -576,13 +590,19 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                                  'dzzenabled{}'.format(allow_zz), label, random_seed, step)
         result_fm = save_results(scores_fm, testy, model, dataset, 'fm',
                                  'dzzenabled{}'.format(allow_zz), label, random_seed, step)
+        result_l2_sigma = save_results(scores_l2_sigma, testy, model, dataset, 'l2',
+                                 'dzzenabled{}'.format(allow_zz), label, random_seed, step)
+        result_z_ema = save_results(scores_z_ema, testy, model, dataset, 'z_ema',
+                                    'dzzenabled{}'.format(allow_zz), label, random_seed, step)
+        result_z = save_results(scores_z, testy, model, dataset, 'z',
+                                'dzzenabled{}'.format(allow_zz), label, random_seed, step)
         result_fm_xxzz = save_results(scores_fm_xxzz, testy, model, dataset, 'fm_xxzz',
                                       'dzzenabled{}'.format(allow_zz), label, random_seed, step)
         result_fm_emaxxzz = save_results(scores_fm_emaxxzz, testy, model, dataset, 'fm_emaxxzz',
                                       'dzzenabled{}'.format(allow_zz), label, random_seed, step)
 
         # plot_log(log_loss_dis,"loss discriminator")
-        return result_z_ema, result_z, result_ch, result_l1, result_l2, result_fm , result_fm_xxzz, result_fm_emaxxzz
+        return result_z_ema, result_z, result_ch, result_l1, result_l2, result_fm ,result_l2_sigma, result_fm_xxzz, result_fm_emaxxzz
 
 
 def run(args):
@@ -603,7 +623,7 @@ def describe_result(type_score,results):
     print("-------------------------------------------")
 
 
-results_z_ema, results_z, results_ch, results_l1, results_l2, results_fm ,results_fm_xxzz,results_fm_emaxxzz= [],[],[],[],[],[],[]
+results_z_ema, results_z, results_ch, results_l1, results_l2, results_fm ,results_l2_sigma,results_fm_xxzz,results_fm_emaxxzz=[], [],[],[],[],[],[],[],[]
 counter = 0
 good_seed = []
 random_seed = 0
@@ -615,11 +635,11 @@ while counter<5:
     tf.reset_default_graph()
     tf.Graph().as_default()
     tf.set_random_seed(random_seed)
-    result_z_ema, result_z, result_ch, result_l1, result_l2, result_fm, result_fm_xxzz, result_fm_emaxxzz = \
+    result_z_ema, result_z, result_ch, result_l1, result_l2, result_fm,result_l2_sigma, result_fm_xxzz, result_fm_emaxxzz = \
         train_and_test(dataset="arrhythmia", nb_epochs=1000, degree=2, random_seed=random_seed
                        , label=1, allow_zz=True, enable_sm=True, score_method=""
                        , enable_early_stop=False, do_spectral_norm=False)
-    if result_l1[2]>0.4:
+    if result_l1[2]>0.3:
       print("find good result result !")
       good_seed.append(random_seed)
       results_z_ema.append(result_z_ema)
@@ -628,7 +648,9 @@ while counter<5:
       results_l1.append(result_l1)
       results_l2.append(result_l2)
       results_fm.append(result_fm)
+      results_l2_sigma.append(result_l2_sigma)
       results_fm_xxzz.append(result_fm_xxzz)
+      results_fm_emaxxzz.append(result_fm_emaxxzz)
       counter +=1
     random_seed +=1
 
@@ -639,5 +661,6 @@ describe_result('ch',results_ch)
 describe_result('l1',results_l1)
 describe_result('l2',results_l2)
 describe_result('fm',results_fm)
+describe_result('l2_sigma',results_l2_sigma)
 describe_result('fm_xxzz',results_fm_xxzz)
 describe_result('fm_emaxxzz',results_fm_emaxxzz)
