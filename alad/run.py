@@ -363,8 +363,8 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             # ______________________________________________________my scores !!!
 
             rec_z = z_pl - rec_z_ema
-            rec = tf.layers.flatten(rec)
-            score_l2_sigma = tf.norm(rec, ord=2, axis=1,
+            rec_z = tf.layers.flatten(rec_z)
+            score_l2_sigma = tf.norm(rec_z, ord=2, axis=1,
                                keep_dims=False, name='d_loss')
             score_l2_sigma = tf.squeeze(score_l2_sigma)
             score_l2_sigma += score_l2
@@ -590,7 +590,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                                  'dzzenabled{}'.format(allow_zz), label, random_seed, step)
         result_fm = save_results(scores_fm, testy, model, dataset, 'fm',
                                  'dzzenabled{}'.format(allow_zz), label, random_seed, step)
-        result_l2_sigma = save_results(scores_l2_sigma, testy, model, dataset, 'l2',
+        result_l2_sigma = save_results(scores_l2_sigma, testy, model, dataset, 'l2_sigma',
                                  'dzzenabled{}'.format(allow_zz), label, random_seed, step)
         result_z_ema = save_results(scores_z_ema, testy, model, dataset, 'z_ema',
                                     'dzzenabled{}'.format(allow_zz), label, random_seed, step)
@@ -623,7 +623,8 @@ def describe_result(type_score,results):
     print("-------------------------------------------")
 
 
-results_z_ema, results_z, results_ch, results_l1, results_l2, results_fm ,results_l2_sigma,results_fm_xxzz,results_fm_emaxxzz=[], [],[],[],[],[],[],[],[]
+results_z_ema, results_z, results_ch, results_l1, results_l2, results_fm \
+    ,results_l2_sigma,results_fm_xxzz,results_fm_emaxxzz=[], [],[],[],[],[],[],[],[]
 counter = 0
 good_seed = []
 random_seed = 0
