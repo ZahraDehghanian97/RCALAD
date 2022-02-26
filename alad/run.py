@@ -1,16 +1,18 @@
 import warnings
 import pandas as pd
+
 warnings.filterwarnings('ignore')
 import time
 import numpy as np
 import tensorflow.compat.v1 as tf
+
 tf.disable_v2_behavior()
 tf.logging.set_verbosity(tf.logging.ERROR)
 import os
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import importlib
 import sys
-
 
 pd.set_option('display.max_columns', 500)
 
@@ -34,10 +36,10 @@ def get_getter(ema):  # to update neural net with moving avg variables, suitable
 
 
 def display_parameters(batch_size, starting_lr, ema_decay, degree, label,
-                       allow_zz, score_method, do_spectral_norm,nb_epochs):
+                       allow_zz, score_method, do_spectral_norm, nb_epochs):
     """See parameters
     """
-    print("Number of Epochs: ",nb_epochs)
+    print("Number of Epochs: ", nb_epochs)
     print('Batch size: ', batch_size)
     # print('Starting learning rate: ', starting_lr)
     # print('EMA Decay: ', ema_decay)
@@ -120,7 +122,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     print('Building graph...')
     print("ALAD is training with the following parameters:")
     display_parameters(batch_size, starting_lr, ema_decay, degree, label,
-                       allow_zz, score_method, do_spectral_norm,nb_epochs)
+                       allow_zz, score_method, do_spectral_norm, nb_epochs)
 
     gen = network.decoder
     enc = network.encoder
@@ -159,15 +161,15 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
     with tf.variable_scope('discriminator_model_zz'):
         z_logit_real, inter_layer_inp_zz = dis_zz(z_pl, z_pl, is_training=is_training_pl,
-                                 do_spectral_norm=do_spectral_norm)
-        z_logit_fake,inter_layer_rct_zz = dis_zz(z_pl, rec_z, is_training=is_training_pl,
-                                 reuse=True, do_spectral_norm=do_spectral_norm)
+                                                  do_spectral_norm=do_spectral_norm)
+        z_logit_fake, inter_layer_rct_zz = dis_zz(z_pl, rec_z, is_training=is_training_pl,
+                                                  reuse=True, do_spectral_norm=do_spectral_norm)
 
     with tf.variable_scope('discriminator_model_xxzz'):
         xz_logit_real, inter_layer_inp_xxzz = dis_xxzz(x_pl, x_pl, z_pl, z_pl, is_training=is_training_pl,
-                                    do_spectral_norm=do_spectral_norm)
+                                                       do_spectral_norm=do_spectral_norm)
         xz_logit_fake, inter_layer_rct_xxzz = dis_xxzz(x_pl, rec_x, z_pl, rec_z, is_training=is_training_pl,
-                                    reuse=True, do_spectral_norm=do_spectral_norm)
+                                                       reuse=True, do_spectral_norm=do_spectral_norm)
 
     with tf.name_scope('loss_functions'):
 
@@ -340,7 +342,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                                                               reuse=True,
                                                               do_spectral_norm=do_spectral_norm)
 
-        l_generator_emaxxzz, inter_layer_rct_emaxxzz = dis_xxzz(x_pl, rec_x_ema,z_pl, z_gen_ema,
+        l_generator_emaxxzz, inter_layer_rct_emaxxzz = dis_xxzz(x_pl, rec_x_ema, z_pl, z_gen_ema,
                                                                 is_training=is_training_pl,
                                                                 getter=get_getter(xxzz_ema),
                                                                 reuse=True,
@@ -349,11 +351,6 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     with tf.name_scope('Testing'):
 
         with tf.variable_scope('Scores'):
-            score_ch = tf.nn.sigmoid_cross_entropy_with_logits(
-                labels=tf.ones_like(l_generator_emaxx),
-                logits=l_generator_emaxx)
-            score_ch = tf.squeeze(score_ch)
-
             rec = x_pl - rec_x_ema
             rec = tf.layers.flatten(rec)
             score_l1 = tf.norm(rec, ord=1, axis=1,
@@ -374,43 +371,23 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                                keep_dims=False, name='d_loss')
             score_fm = tf.squeeze(score_fm)
 
+            score_xx = tf.nn.sigmoid_cross_entropy_with_logits(
+                labels=tf.ones_like(l_generator_emaxx),
+                logits=l_generator_emaxx)
+            score_xx = tf.squeeze(score_xx)
+
             # ______________________________________________________my scores !!!
-            score_ch_sigma = tf.nn.sigmoid_cross_entropy_with_logits(
-            labels=tf.ones_like(l_generator_emazz),
-            logits=l_generator_emazz)
-            score_ch_sigma = tf.squeeze(score_ch_sigma)
-            score_ch_sigma += score_ch
+            score_zz = tf.nn.sigmoid_cross_entropy_with_logits(
+                labels=tf.ones_like(l_generator_emazz),
+                logits=l_generator_emazz)
+            score_zz = tf.squeeze(score_zz)
 
-            rec_z = z_pl - rec_z_ema
-            rec_z = tf.layers.flatten(rec_z)
-            score_l2_sigma = tf.norm(rec_z, ord=2, axis=1,
-                               keep_dims=False, name='d_loss')
-            score_l2_sigma = tf.squeeze(score_l2_sigma)
-            score_l2_sigma += score_l2
-
-            fm = inter_layer_inp_xxzz - inter_layer_rct_xxzz
-            fm = tf.layers.flatten(fm)
-            score_fm_xxzz = tf.norm(fm, ord=degree, axis=1,
-                               keep_dims=False, name='d_loss')
-            score_fm_xxzz = tf.squeeze(score_fm_xxzz)
-
-            fm = inter_layer_inp_emaxxzz - inter_layer_rct_emaxxzz
-            fm = tf.layers.flatten(fm)
-            score_fm_emaxxzz = tf.norm(fm, ord=degree, axis=1,
-                                    keep_dims=False, name='d_loss')
-            score_fm_emaxxzz = tf.squeeze(score_fm_emaxxzz)
-
-            score_z_ema = tf.nn.sigmoid_cross_entropy_with_logits(
+            score_xxzz = tf.nn.sigmoid_cross_entropy_with_logits(
                 labels=tf.ones_like(l_generator_emaxxzz),
                 logits=l_generator_emaxxzz)
-            score_z_ema = tf.squeeze(score_z_ema)
+            score_xxzz = tf.squeeze(score_xxzz)
 
-            score_ch_sigma_all = score_ch_sigma + score_z_ema
-
-            score_z = tf.nn.sigmoid_cross_entropy_with_logits(
-                labels=tf.ones_like(xz_logit_fake),
-                logits=xz_logit_fake)
-            score_z = tf.squeeze(score_z)
+            score_all = score_xx + score_zz + score_xxzz
 
     if enable_early_stop:
         rec_error_valid = tf.reduce_mean(score_fm)
@@ -494,7 +471,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             train_loss_dis_xx /= nr_batches_train
             train_loss_dis_zz /= nr_batches_train
             train_loss_dis_xxzz /= nr_batches_train
-            if epoch % 100 ==0 :
+            if epoch % 100 == 0:
                 if allow_zz:
                     print("Epoch %d | time = %ds | loss gen = %.4f | loss enc = %.4f | "
                           "loss dis = %.4f | loss dis xz = %.4f | loss dis xx = %.4f | "
@@ -542,17 +519,13 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
         # sv.saver.save(sess, logdir + '/model.ckpt', global_step=step)
 
         print('Testing evaluation...')
-        scores_z_ema = []
-        scores_z = []
-        scores_ch = []
         scores_l1 = []
         scores_l2 = []
         scores_fm = []
-        scores_ch_sigma = []
-        scores_ch_sigma_all = []
-        scores_l2_sigma = []
-        scores_fm_xxzz = []
-        scores_fm_emaxxzz = []
+        scores_zz = []
+        scores_xx = []
+        scores_xxzz = []
+        scores_all = []
         inference_time = []
 
         # Create scores
@@ -565,17 +538,14 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             feed_dict = {x_pl: testx[ran_from:ran_to],
                          z_pl: np.random.normal(size=[batch_size, latent_dim]),
                          is_training_pl: False}
-            scores_ch += sess.run(score_ch, feed_dict=feed_dict).tolist()
+
             scores_l1 += sess.run(score_l1, feed_dict=feed_dict).tolist()
             scores_l2 += sess.run(score_l2, feed_dict=feed_dict).tolist()
             scores_fm += sess.run(score_fm, feed_dict=feed_dict).tolist()
-            scores_ch_sigma += sess.run(score_ch_sigma, feed_dict=feed_dict).tolist()
-            scores_ch_sigma_all += sess.run(score_ch_sigma_all, feed_dict=feed_dict).tolist()
-            scores_z_ema += sess.run(score_z_ema, feed_dict=feed_dict).tolist()
-            scores_z += sess.run(score_z, feed_dict=feed_dict).tolist()
-            scores_l2_sigma += sess.run(score_l2_sigma, feed_dict=feed_dict).tolist()
-            scores_fm_xxzz += sess.run(score_fm_xxzz, feed_dict=feed_dict).tolist()
-            scores_fm_emaxxzz += sess.run(score_fm_emaxxzz, feed_dict=feed_dict).tolist()
+            scores_xx += sess.run(score_xx, feed_dict=feed_dict).tolist()
+            scores_zz += sess.run(score_zz, feed_dict=feed_dict).tolist()
+            scores_xxzz += sess.run(score_xxzz, feed_dict=feed_dict).tolist()
+            scores_all += sess.run(score_all, feed_dict=feed_dict).tolist()
             inference_time.append(time.time() - begin_test_time_batch)
 
         inference_time = np.mean(inference_time)
@@ -587,56 +557,41 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                          z_pl: np.random.normal(size=[batch_size, latent_dim]),
                          is_training_pl: False}
 
-            bscores_ch = sess.run(score_ch, feed_dict=feed_dict).tolist()
             bscores_l1 = sess.run(score_l1, feed_dict=feed_dict).tolist()
             bscores_l2 = sess.run(score_l2, feed_dict=feed_dict).tolist()
             bscores_fm = sess.run(score_fm, feed_dict=feed_dict).tolist()
-            bscores_ch_sigma = sess.run(score_ch_sigma, feed_dict=feed_dict).tolist()
-            bscores_ch_sigma_all = sess.run(score_ch_sigma_all, feed_dict=feed_dict).tolist()
-            bscores_l2_sigma = sess.run(score_l2_sigma, feed_dict=feed_dict).tolist()
-            bscores_z_ema = sess.run(score_z_ema, feed_dict=feed_dict).tolist()
-            bscores_z = sess.run(score_z, feed_dict=feed_dict).tolist()
-            bscores_fm_xxzz = sess.run(score_fm_xxzz, feed_dict=feed_dict).tolist()
-            bscores_fm_emaxxzz = sess.run(score_fm_emaxxzz, feed_dict=feed_dict).tolist()
-            scores_ch += bscores_ch[:size]
+            bscores_xx = sess.run(score_xx, feed_dict=feed_dict).tolist()
+            bscores_zz = sess.run(score_zz, feed_dict=feed_dict).tolist()
+            bscores_xxzz = sess.run(score_xxzz, feed_dict=feed_dict).tolist()
+            bscores_all = sess.run(score_all, feed_dict=feed_dict).tolist()
+
             scores_l1 += bscores_l1[:size]
             scores_l2 += bscores_l2[:size]
             scores_fm += bscores_fm[:size]
-            scores_ch_sigma += bscores_ch_sigma[:size]
-            scores_ch_sigma_all += bscores_ch_sigma_all[:size]
-            scores_l2_sigma += bscores_l2_sigma[:size]
-            scores_z_ema += bscores_z_ema[:size]
-            scores_z += bscores_z[:size]
-            scores_fm_xxzz += bscores_fm_xxzz[:size]
-            scores_fm_emaxxzz += bscores_fm_emaxxzz[:size]
+            scores_xx += bscores_xx[:size]
+            scores_zz += bscores_zz[:size]
+            scores_xxzz += bscores_xxzz[:size]
+            scores_all += bscores_all[:size]
 
         model = 'alad_sn{}_dzz{}'.format(do_spectral_norm, allow_zz)
-        result_ch = save_results(scores_ch, testy, model, dataset, 'ch',
-                                 'dzzenabled{}'.format(allow_zz), label, random_seed, step)
         result_l1 = save_results(scores_l1, testy, model, dataset, 'l1',
                                  'dzzenabled{}'.format(allow_zz), label, random_seed, step)
         result_l2 = save_results(scores_l2, testy, model, dataset, 'l2',
                                  'dzzenabled{}'.format(allow_zz), label, random_seed, step)
         result_fm = save_results(scores_fm, testy, model, dataset, 'fm',
                                  'dzzenabled{}'.format(allow_zz), label, random_seed, step)
-        result_ch_sigma = save_results(scores_ch_sigma, testy, model, dataset, 'ch_sigma',
+        result_xx = save_results(scores_xx, testy, model, dataset, 'dxx',
                                  'dzzenabled{}'.format(allow_zz), label, random_seed, step)
-        result_ch_sigma_all = save_results(scores_ch_sigma_all, testy, model, dataset, 'ch_sigma_all',
-                                       'dzzenabled{}'.format(allow_zz), label, random_seed, step)
-        result_l2_sigma = save_results(scores_l2_sigma, testy, model, dataset, 'l2_sigma',
+        result_zz = save_results(scores_zz, testy, model, dataset, 'dzz',
                                  'dzzenabled{}'.format(allow_zz), label, random_seed, step)
-        result_z_ema = save_results(scores_z_ema, testy, model, dataset, 'z_ema',
-                                    'dzzenabled{}'.format(allow_zz), label, random_seed, step)
-        result_z = save_results(scores_z, testy, model, dataset, 'z',
-                                'dzzenabled{}'.format(allow_zz), label, random_seed, step)
-        result_fm_xxzz = save_results(scores_fm_xxzz, testy, model, dataset, 'fm_xxzz',
-                                      'dzzenabled{}'.format(allow_zz), label, random_seed, step)
-        result_fm_emaxxzz = save_results(scores_fm_emaxxzz, testy, model, dataset, 'fm_emaxxzz',
-                                      'dzzenabled{}'.format(allow_zz), label, random_seed, step)
+        result_xxzz = save_results(scores_xxzz, testy, model, dataset, 'dxxzz',
+                                   'dzzenabled{}'.format(allow_zz), label, random_seed, step)
+        result_all = save_results(scores_all, testy, model, dataset, 'd_all',
+                                  'dzzenabled{}'.format(allow_zz), label, random_seed, step)
 
         # plot_log(log_loss_dis,"loss discriminator")
-        return result_z_ema, result_z, result_ch, result_l1, result_l2, result_fm , \
-               result_ch_sigma ,result_ch_sigma_all,result_l2_sigma, result_fm_xxzz, result_fm_emaxxzz
+        return result_l1, result_l2, result_fm, \
+               result_xx, result_zz, result_xxzz, result_all
 
 
 def run(args):
@@ -650,59 +605,49 @@ def run(args):
                        args.enable_early_stop, args.sn)
 
 
-def describe_result(type_score,results):
-    print("Describe Result for ",type_score," scoring")
-    df_results = pd.DataFrame(results,columns=['precision','recall','f1','roc_auc'])
+def describe_result(type_score, results):
+    print("Describe Result for ", type_score, " scoring")
+    df_results = pd.DataFrame(results, columns=['precision', 'recall', 'f1', 'roc_auc'])
     print(df_results.describe(include='all')[1:3])
     print("-------------------------------------------")
 
 
-results_z_ema, results_z, results_ch, results_l1, results_l2, results_fm \
-    ,results_ch_sigma,results_ch_sigma_all, results_l2_sigma,results_fm_xxzz\
-    ,results_fm_emaxxzz=[],[], [],[],[],[],[],[],[],[],[]
+results_l1, results_l2, results_fm, results_xx, \
+results_zz, results_xxzz, results_all = [], [], [], [], [], [], []
 counter = 0
 good_seed = []
 random_seed = 0
-while counter<5:
+while counter < 5:
     print("===========================================")
-    print("start round ",counter)
-    print("random seed = ",random_seed)
+    print("start round ", counter)
+    print("random seed = ", random_seed)
     tf.keras.backend.clear_session()
     tf.reset_default_graph()
     tf.Graph().as_default()
     tf.set_random_seed(random_seed)
-    result_z_ema, result_z, result_ch, result_l1, result_l2, result_fm\
-        ,result_ch_sigma,result_ch_sigma_all,result_l2_sigma, result_fm_xxzz, result_fm_emaxxzz = \
-        train_and_test(dataset="arrhythmia", nb_epochs=1000, degree=2, random_seed=random_seed
+    result_l1, result_l2, result_fm ,result_xx, result_zz, result_xxzz, result_all = \
+    train_and_test(dataset="arrhythmia", nb_epochs=1000, degree=2, random_seed=random_seed
                        , label=1, allow_zz=True, enable_sm=True, score_method=""
                        , enable_early_stop=False, do_spectral_norm=False)
-    if result_l1[2]>0.3:
-      print("find good result result !")
-      good_seed.append(random_seed)
-      results_z_ema.append(result_z_ema)
-      results_z.append(result_z)
-      results_ch.append(result_ch)
-      results_l1.append(result_l1)
-      results_l2.append(result_l2)
-      results_fm.append(result_fm)
-      results_ch_sigma.append(result_ch_sigma)
-      results_ch_sigma_all.append(result_ch_sigma_all)
-      results_l2_sigma.append(result_l2_sigma)
-      results_fm_xxzz.append(result_fm_xxzz)
-      results_fm_emaxxzz.append(result_fm_emaxxzz)
-      counter +=1
-    random_seed +=1
+    if result_l1[2] > 0.1:
+        # print("find good result result !")
+        good_seed.append(random_seed)
+        results_l1.append(result_l1)
+        results_l2.append(result_l2)
+        results_fm.append(result_fm)
+        results_xx.append(result_xx)
+        results_zz.append(result_zz)
+        results_xxzz.append(result_xxzz)
+        results_all.append(result_all)
+        counter += 1
+    random_seed += 1
 
-print("good seeds : ",good_seed)
-describe_result('ch',results_ch)
-describe_result('l1',results_l1)
-describe_result('l2',results_l2)
-describe_result('fm',results_fm)
+print("good seeds : ", good_seed)
+describe_result('l1', results_l1)
+describe_result('l2', results_l2)
+describe_result('fm', results_fm)
 print("MY SCORES : >>>>>>>>>>>>>>>>>")
-describe_result('z_ema',results_z_ema)
-# describe_result('z',results_z)
-describe_result('ch_sigma',results_ch_sigma)
-describe_result('ch_sigma_all',results_ch_sigma_all)
-describe_result('l2_sigma',results_l2_sigma)
-# describe_result('fm_xxzz',results_fm_xxzz)
-describe_result('fm_emaxxzz',results_fm_emaxxzz)
+describe_result('score_xx', results_xx)
+describe_result('score_zz', results_zz)
+describe_result('score_xxzz', results_xxzz)
+describe_result('score_all',results_all)
