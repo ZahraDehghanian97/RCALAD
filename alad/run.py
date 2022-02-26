@@ -320,13 +320,13 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                                                           reuse=True,
                                                           do_spectral_norm=do_spectral_norm)
     with tf.variable_scope('discriminator_model_zz'):
-        l_encoder_emazz, inter_layer_inp_emazz = dis_xx(z_pl, z_pl,
+        l_encoder_emazz, inter_layer_inp_emazz = dis_zz(z_pl, z_pl,
                                                         is_training=is_training_pl,
                                                         getter=get_getter(zz_ema),
                                                         reuse=True,
                                                         do_spectral_norm=do_spectral_norm)
 
-        l_generator_emazz, inter_layer_rct_emazz = dis_xx(z_pl, rec_z_ema,
+        l_generator_emazz, inter_layer_rct_emazz = dis_zz(z_pl, rec_z_ema,
                                                           is_training=is_training_pl,
                                                           getter=get_getter(
                                                               zz_ema),
