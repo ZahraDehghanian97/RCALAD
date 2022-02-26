@@ -356,13 +356,17 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                                keep_dims=False, name='d_loss')
             score_fm = tf.squeeze(score_fm)
 
-            inter_layer_inp_xxzz, inter_layer_rct_xxzz = inter_layer_inp_emaxxzz, \
-                                               inter_layer_rct_emaxxzz
             fm = inter_layer_inp_xxzz - inter_layer_rct_xxzz
             fm = tf.layers.flatten(fm)
             score_fm_xxzz = tf.norm(fm, ord=degree, axis=1,
                                keep_dims=False, name='d_loss')
             score_fm_xxzz = tf.squeeze(score_fm_xxzz)
+
+            fm = inter_layer_inp_emaxxzz - inter_layer_rct_emaxxzz
+            fm = tf.layers.flatten(fm)
+            score_fm_emaxxzz = tf.norm(fm, ord=degree, axis=1,
+                                    keep_dims=False, name='d_loss')
+            score_fm_emaxxzz = tf.squeeze(score_fm_emaxxzz)
 
             score_z_ema = tf.nn.sigmoid_cross_entropy_with_logits(
                 labels=tf.ones_like(l_generator_emaxxzz),
@@ -456,21 +460,21 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             train_loss_dis_xx /= nr_batches_train
             train_loss_dis_zz /= nr_batches_train
             train_loss_dis_xxzz /= nr_batches_train
+            if epoch % 100 ==0 :
+                if allow_zz:
+                    print("Epoch %d | time = %ds | loss gen = %.4f | loss enc = %.4f | "
+                          "loss dis = %.4f | loss dis xz = %.4f | loss dis xx = %.4f | "
+                          "loss dis zz = %.4f | loss dis xxzz = %.4f |"
+                          % (epoch, time.time() - begin, train_loss_gen,
+                             train_loss_enc, train_loss_dis, train_loss_dis_xz,
+                             train_loss_dis_xx, train_loss_dis_zz, train_loss_dis_xxzz))
 
-            # if allow_zz:
-            #     print("Epoch %d | time = %ds | loss gen = %.4f | loss enc = %.4f | "
-            #           "loss dis = %.4f | loss dis xz = %.4f | loss dis xx = %.4f | "
-            #           "loss dis zz = %.4f | loss dis xxzz = %.4f |"
-            #           % (epoch, time.time() - begin, train_loss_gen,
-            #              train_loss_enc, train_loss_dis, train_loss_dis_xz,
-            #              train_loss_dis_xx, train_loss_dis_zz, train_loss_dis_xxzz))
-            #
-            # else:
-            #     print("Epoch %d | time = %ds | loss gen = %.4f | loss enc = %.4f | "
-            #           "loss dis = %.4f | loss dis xz = %.4f | loss dis xx = %.4f | loss dis xxzz = %.4f | "
-            #           % (epoch, time.time() - begin, train_loss_gen,
-            #              train_loss_enc, train_loss_dis, train_loss_dis_xz,
-            #              train_loss_dis_xx, train_loss_dis_xxzz))
+                else:
+                    print("Epoch %d | time = %ds | loss gen = %.4f | loss enc = %.4f | "
+                          "loss dis = %.4f | loss dis xz = %.4f | loss dis xx = %.4f | loss dis xxzz = %.4f | "
+                          % (epoch, time.time() - begin, train_loss_gen,
+                             train_loss_enc, train_loss_dis, train_loss_dis_xz,
+                             train_loss_dis_xx, train_loss_dis_xxzz))
 
             log_loss_dis.append(train_loss_dis)
             ##EARLY STOPPING
@@ -511,6 +515,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
         scores_l2 = []
         scores_fm = []
         scores_fm_xxzz = []
+        scores_fm_emaxxzz = []
         inference_time = []
 
         # Create scores
@@ -530,6 +535,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             scores_l2 += sess.run(score_l2, feed_dict=feed_dict).tolist()
             scores_fm += sess.run(score_fm, feed_dict=feed_dict).tolist()
             scores_fm_xxzz += sess.run(score_fm_xxzz, feed_dict=feed_dict).tolist()
+            scores_fm_emaxxzz += sess.run(score_fm_emaxxzz, feed_dict=feed_dict).tolist()
             inference_time.append(time.time() - begin_test_time_batch)
 
         inference_time = np.mean(inference_time)
@@ -547,6 +553,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             bscores_l2 = sess.run(score_l2, feed_dict=feed_dict).tolist()
             bscores_fm = sess.run(score_fm, feed_dict=feed_dict).tolist()
             bscores_fm_xxzz = sess.run(score_fm_xxzz, feed_dict=feed_dict).tolist()
+            bscores_fm_emaxxzz = sess.run(score_fm_emaxxzz, feed_dict=feed_dict).tolist()
             scores_z_ema += bscores_z_ema[:size]
             scores_z += bscores_z[:size]
             scores_ch += bscores_ch[:size]
@@ -554,6 +561,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             scores_l2 += bscores_l2[:size]
             scores_fm += bscores_fm[:size]
             scores_fm_xxzz += bscores_fm_xxzz[:size]
+            scores_fm_emaxxzz += bscores_fm_emaxxzz[:size]
 
         model = 'alad_sn{}_dzz{}'.format(do_spectral_norm, allow_zz)
         result_z_ema = save_results(scores_z_ema, testy, model, dataset, 'z_ema',
@@ -569,9 +577,12 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
         result_fm = save_results(scores_fm, testy, model, dataset, 'fm',
                                  'dzzenabled{}'.format(allow_zz), label, random_seed, step)
         result_fm_xxzz = save_results(scores_fm_xxzz, testy, model, dataset, 'fm_xxzz',
-                                 'dzzenabled{}'.format(allow_zz), label, random_seed, step)
+                                      'dzzenabled{}'.format(allow_zz), label, random_seed, step)
+        result_fm_emaxxzz = save_results(scores_fm_emaxxzz, testy, model, dataset, 'fm_emaxxzz',
+                                      'dzzenabled{}'.format(allow_zz), label, random_seed, step)
+
         # plot_log(log_loss_dis,"loss discriminator")
-        return result_z_ema, result_z, result_ch, result_l1, result_l2, result_fm , result_fm_xxzz
+        return result_z_ema, result_z, result_ch, result_l1, result_l2, result_fm , result_fm_xxzz, result_fm_emaxxzz
 
 
 def run(args):
@@ -592,7 +603,7 @@ def describe_result(type_score,results):
     print("-------------------------------------------")
 
 
-results_z_ema, results_z, results_ch, results_l1, results_l2, results_fm ,results_fm_xxzz= [],[],[],[],[],[],[]
+results_z_ema, results_z, results_ch, results_l1, results_l2, results_fm ,results_fm_xxzz,results_fm_emaxxzz= [],[],[],[],[],[],[]
 counter = 0
 good_seed = []
 random_seed = 0
@@ -604,9 +615,9 @@ while counter<5:
     tf.reset_default_graph()
     tf.Graph().as_default()
     tf.set_random_seed(random_seed)
-    result_z_ema, result_z, result_ch, result_l1, result_l2, result_fm, result_fm_xxzz = \
+    result_z_ema, result_z, result_ch, result_l1, result_l2, result_fm, result_fm_xxzz, result_fm_emaxxzz = \
         train_and_test(dataset="arrhythmia", nb_epochs=1000, degree=2, random_seed=random_seed
-                       , label=1, allow_zz=False, enable_sm=True, score_method=""
+                       , label=1, allow_zz=True, enable_sm=True, score_method=""
                        , enable_early_stop=False, do_spectral_norm=False)
     if result_l1[2]>0.4:
       print("find good result result !")
@@ -629,3 +640,4 @@ describe_result('l1',results_l1)
 describe_result('l2',results_l2)
 describe_result('fm',results_fm)
 describe_result('fm_xxzz',results_fm_xxzz)
+describe_result('fm_emaxxzz',results_fm_emaxxzz)
