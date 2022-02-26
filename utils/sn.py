@@ -1,6 +1,6 @@
 ### Credits https://github.com/taki0112/Spectral_Normalization-Tensorflow
 
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 
 def conv2d(inputs, filters, kernel_size, strides=1, padding='valid',
            use_bias=True, kernel_initializer=None,

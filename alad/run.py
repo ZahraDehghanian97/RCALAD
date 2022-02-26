@@ -617,7 +617,7 @@ results_zz, results_xxzz, results_all = [], [], [], [], [], [], []
 counter = 0
 good_seed = []
 random_seed = 0
-while counter < 5:
+while counter < 10:
     print("===========================================")
     print("start round ", counter)
     print("random seed = ", random_seed)
@@ -628,8 +628,8 @@ while counter < 5:
     result_l1, result_l2, result_fm ,result_xx, result_zz, result_xxzz, result_all = \
     train_and_test(dataset="arrhythmia", nb_epochs=1000, degree=2, random_seed=random_seed
                        , label=1, allow_zz=True, enable_sm=True, score_method=""
-                       , enable_early_stop=False, do_spectral_norm=False)
-    if result_l1[2] > 0.1:
+                       , enable_early_stop=False, do_spectral_norm=True)
+    if result_all[2] > 0.5:
         # print("find good result result !")
         good_seed.append(random_seed)
         results_l1.append(result_l1)
