@@ -266,6 +266,15 @@ def discriminator_xxzz(x, rec_x, z, rec_z, is_training=False, getter=None, reuse
                                               name='batch_normalization')
             x = leakyReLu(x)
 
+        name_net = 'xx_layer_2'
+        with tf.variable_scope(name_net):
+            x = tf.layers.dense(x,
+                                  units=128,
+                                  kernel_initializer=init_kernel,
+                                  name='fc')
+            x = leakyReLu(x)
+            x = tf.layers.dropout(x, rate=0.2, name='dropout', training=is_training)
+
         # D(z,z)
         name_z = 'zz_layer_1'
         net_z = tf.concat([z, rec_z], axis=1)
@@ -285,13 +294,13 @@ def discriminator_xxzz(x, rec_x, z, rec_z, is_training=False, getter=None, reuse
             y = leakyReLu(y)
             y = tf.layers.dropout(y, rate=0.5, name='dropout', training=is_training)
 
+        intermediate_layer = y
         name_y = 'y_layer_2'
         with tf.variable_scope(name_y):
             y = tf.layers.dense(y,
                                 32,
                                 kernel_initializer=init_kernel)
         name_y = 'y_layer_3'
-        intermediate_layer = y
         with tf.variable_scope(name_y):
             logits = tf.layers.dense(y,
                                      1,
