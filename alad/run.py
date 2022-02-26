@@ -449,20 +449,20 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             train_loss_dis_zz /= nr_batches_train
             train_loss_dis_xxzz /= nr_batches_train
 
-            # if allow_zz:
-            #     print("Epoch %d | time = %ds | loss gen = %.4f | loss enc = %.4f | "
-            #           "loss dis = %.4f | loss dis xz = %.4f | loss dis xx = %.4f | "
-            #           "loss dis zz = %.4f | loss dis xxzz = %.4f |"
-            #           % (epoch, time.time() - begin, train_loss_gen,
-            #              train_loss_enc, train_loss_dis, train_loss_dis_xz,
-            #              train_loss_dis_xx, train_loss_dis_zz, train_loss_dis_xxzz))
+            if allow_zz:
+                print("Epoch %d | time = %ds | loss gen = %.4f | loss enc = %.4f | "
+                      "loss dis = %.4f | loss dis xz = %.4f | loss dis xx = %.4f | "
+                      "loss dis zz = %.4f | loss dis xxzz = %.4f |"
+                      % (epoch, time.time() - begin, train_loss_gen,
+                         train_loss_enc, train_loss_dis, train_loss_dis_xz,
+                         train_loss_dis_xx, train_loss_dis_zz, train_loss_dis_xxzz))
 
-            # else:
-            #     print("Epoch %d | time = %ds | loss gen = %.4f | loss enc = %.4f | "
-            #           "loss dis = %.4f | loss dis xz = %.4f | loss dis xx = %.4f | loss dis xxzz = %.4f | "
-            #           % (epoch, time.time() - begin, train_loss_gen,
-            #              train_loss_enc, train_loss_dis, train_loss_dis_xz,
-            #              train_loss_dis_xx, train_loss_dis_xxzz))
+            else:
+                print("Epoch %d | time = %ds | loss gen = %.4f | loss enc = %.4f | "
+                      "loss dis = %.4f | loss dis xz = %.4f | loss dis xx = %.4f | loss dis xxzz = %.4f | "
+                      % (epoch, time.time() - begin, train_loss_gen,
+                         train_loss_enc, train_loss_dis, train_loss_dis_xz,
+                         train_loss_dis_xx, train_loss_dis_xxzz))
 
             log_loss_dis.append(train_loss_dis)
             ##EARLY STOPPING
@@ -580,18 +580,23 @@ def describe_result(type_score,results):
 
 results_z_ema, results_z, results_ch, results_l1, results_l2, results_fm = [],[],[],[],[],[]
 counter = 0
-while counter<10:
+good_seed = []
+random_seed = 0
+while counter<3:
     print("===========================================")
     print("start round ",counter)
+    print("random seed = ",random_seed)
     tf.keras.backend.clear_session()
     tf.reset_default_graph()
     tf.Graph().as_default()
-    # tf.set_random_seed(random_seed)
+    tf.set_random_seed(random_seed)
     result_z_ema, result_z, result_ch, result_l1, result_l2, result_fm = \
-        train_and_test(dataset="arrhythmia", nb_epochs=1000, degree=2, random_seed=2
-                       , label=1, allow_zz=True, enable_sm=True, score_method=""
+        train_and_test(dataset="cifar10", nb_epochs=100, degree=2, random_seed=random_seed
+                       , label=1, allow_zz=False, enable_sm=True, score_method=""
                        , enable_early_stop=False, do_spectral_norm=False)
-    if result_l1[2]>0.35:
+    if result_l1[3]>0.5:
+      print("find good result result !")
+      good_seed.append(random_seed)
       results_z_ema.append(result_z_ema)
       results_z.append(result_z)
       results_ch.append(result_ch)
@@ -599,7 +604,9 @@ while counter<10:
       results_l2.append(result_l2)
       results_fm.append(result_fm)
       counter +=1
+    random_seed +=1
 
+print("good seeds : ",good_seed)
 describe_result('z_ema',results_z_ema)
 describe_result('z',results_z)
 describe_result('ch',results_ch)
