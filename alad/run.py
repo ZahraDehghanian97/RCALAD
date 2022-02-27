@@ -471,7 +471,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             train_loss_dis_xx /= nr_batches_train
             train_loss_dis_zz /= nr_batches_train
             train_loss_dis_xxzz /= nr_batches_train
-            if epoch % 100 == 0:
+            if epoch % 10 == 0:
                 if allow_zz:
                     print("Epoch %d | time = %ds | loss gen = %.4f | loss enc = %.4f | "
                           "loss dis = %.4f | loss dis xz = %.4f | loss dis xx = %.4f | "
@@ -614,33 +614,35 @@ def describe_result(type_score, results):
 
 results_l1, results_l2, results_fm, results_xx, \
 results_zz, results_xxzz, results_all = [], [], [], [], [], [], []
-counter = 0
 good_seed = []
-random_seed = 0
-while counter < 10:
-    print("===========================================")
-    print("start round ", counter)
-    print("random seed = ", random_seed)
-    tf.keras.backend.clear_session()
-    tf.reset_default_graph()
-    tf.Graph().as_default()
-    tf.set_random_seed(random_seed)
-    result_l1, result_l2, result_fm ,result_xx, result_zz, result_xxzz, result_all = \
-    train_and_test(dataset="arrhythmia", nb_epochs=1000, degree=2, random_seed=random_seed
-                       , label=1, allow_zz=True, enable_sm=True, score_method=""
-                       , enable_early_stop=False, do_spectral_norm=True)
-    if result_all[2] > 0.5:
-        # print("find good result result !")
-        good_seed.append(random_seed)
-        results_l1.append(result_l1)
-        results_l2.append(result_l2)
-        results_fm.append(result_fm)
-        results_xx.append(result_xx)
-        results_zz.append(result_zz)
-        results_xxzz.append(result_xxzz)
-        results_all.append(result_all)
-        counter += 1
-    random_seed += 1
+for label in range(10):
+    print(">>>>>>>>>>>>>>>> label set to = ", label, " <<<<<<<<<<<<<<<<<<<<<<")
+    counter = 0
+    random_seed = 0
+    while counter < 3:
+        print("===========================================")
+        print("start round ", counter)
+        print("random seed = ", random_seed)
+        tf.keras.backend.clear_session()
+        tf.reset_default_graph()
+        tf.Graph().as_default()
+        tf.set_random_seed(random_seed)
+        result_l1, result_l2, result_fm, result_xx, result_zz, result_xxzz, result_all = \
+            train_and_test(dataset="cifar10", nb_epochs=100, degree=2, random_seed=random_seed
+                           , label=label, allow_zz=True, enable_sm=True, score_method=""
+                           , enable_early_stop=False, do_spectral_norm=True)
+        if result_all[3] > result_fm[3]:
+            # print("find good result result !")
+            good_seed.append(random_seed)
+            results_l1.append(result_l1)
+            results_l2.append(result_l2)
+            results_fm.append(result_fm)
+            results_xx.append(result_xx)
+            results_zz.append(result_zz)
+            results_xxzz.append(result_xxzz)
+            results_all.append(result_all)
+            counter += 1
+        random_seed += 1
 
 print("good seeds : ", good_seed)
 describe_result('l1', results_l1)
@@ -650,4 +652,4 @@ print("MY SCORES : >>>>>>>>>>>>>>>>>")
 describe_result('score_xx', results_xx)
 describe_result('score_zz', results_zz)
 describe_result('score_xxzz', results_xxzz)
-describe_result('score_all',results_all)
+describe_result('score_all', results_all)
