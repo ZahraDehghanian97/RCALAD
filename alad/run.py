@@ -611,7 +611,6 @@ def describe_result(type_score, results):
     print(df_results.describe(include='all')[1:3])
     print("-------------------------------------------")
 
-
 results_l1, results_l2, results_fm, results_xx, \
 results_zz, results_xxzz, results_all = [], [], [], [], [], [], []
 good_seed = []
