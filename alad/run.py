@@ -5,11 +5,12 @@ warnings.filterwarnings('ignore')
 import time
 import numpy as np
 import tensorflow.compat.v1 as tf
-
 tf.disable_v2_behavior()
 tf.logging.set_verbosity(tf.logging.ERROR)
 import os
 
+
+IMAGES_DATASETS = ['cifar10', 'svhn']
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import importlib
 import sys
@@ -604,6 +605,16 @@ def run(args):
                        args.enable_dzz, args.enable_sm, args.m,
                        args.enable_early_stop, args.sn)
 
+def add_result(score_array,x,method):
+    global IMAGES_DATASETS,dataset
+    if dataset in IMAGES_DATASETS:
+        print("Testing with method %s: AUROC = %.4f"
+              % (method, x[3]))
+    else:
+        print("Testing with method %s: Prec = %.4f | Rec = %.4f | F1 = %.4f"
+              % ( method, x[0],x[1],x[2]))
+    score_array.append(x)
+    return score_array
 
 def describe_result(type_score, results):
     print("Describe Result for ", type_score, " scoring")
@@ -614,6 +625,7 @@ def describe_result(type_score, results):
 results_l1, results_l2, results_fm, results_xx, \
 results_zz, results_xxzz, results_all = [], [], [], [], [], [], []
 good_seed = []
+dataset = 'svhn'
 for label in range(10):
     print(">>>>>>>>>>>>>>>> label set to = ", label, " <<<<<<<<<<<<<<<<<<<<<<")
     counter = 0
@@ -627,19 +639,19 @@ for label in range(10):
         tf.Graph().as_default()
         tf.set_random_seed(random_seed)
         result_l1, result_l2, result_fm, result_xx, result_zz, result_xxzz, result_all = \
-            train_and_test(dataset="cifar10", nb_epochs=100, degree=2, random_seed=random_seed
+            train_and_test(dataset=dataset, nb_epochs=100, degree=2, random_seed=random_seed
                            , label=label, allow_zz=True, enable_sm=True, score_method=""
                            , enable_early_stop=False, do_spectral_norm=True)
         if result_all[3] > result_fm[3]:
             # print("find good result result !")
             good_seed.append(random_seed)
-            results_l1.append(result_l1)
-            results_l2.append(result_l2)
-            results_fm.append(result_fm)
-            results_xx.append(result_xx)
-            results_zz.append(result_zz)
-            results_xxzz.append(result_xxzz)
-            results_all.append(result_all)
+            results_l1 = add_result(results_l1,result_l1,"l1")
+            results_l2 = add_result(results_l2,result_l2,"l2")
+            results_fm = add_result(results_fm,result_fm,"fm")
+            results_xx = add_result(results_xx,result_xx,"xx")
+            results_zz = add_result(results_zz, result_zz, "zz")
+            results_xxzz = add_result(results_xxzz, result_xxzz, "xxzz")
+            results_all = add_result(results_all, result_all, "all")
             counter += 1
         random_seed += 1
 

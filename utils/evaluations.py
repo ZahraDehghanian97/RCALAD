@@ -221,12 +221,12 @@ def save_results(scores, true_labels, model, dataset, method, weight, label,
     precision, recall, f1, _ = precision_recall_fscore_support(true_labels.astype(int),
                                                                y_pred.astype(int),
                                                                average='binary')
-    if dataset in IMAGES_DATASETS:
-        print("Testing at step %i, method %s: AUROC = %.4f"
-              % (step, method, roc_auc))
-    else:
-        print("Testing at step %i, method %s: Prec = %.4f | Rec = %.4f | F1 = %.4f"
-              % (step, method, precision, recall, f1))
+    # if dataset in IMAGES_DATASETS:
+    #     print("Testing at step %i, method %s: AUROC = %.4f"
+    #           % (step, method, roc_auc))
+    # else:
+    #     print("Testing at step %i, method %s: Prec = %.4f | Rec = %.4f | F1 = %.4f"
+    #           % (step, method, precision, recall, f1))
 
     results = [model, dataset, method, weight, label,
                step, roc_auc, precision, recall, f1, random_seed, time.ctime()]
