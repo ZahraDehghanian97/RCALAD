@@ -364,34 +364,41 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                                keep_dims=False, name='d_loss')
             score_l2 = tf.squeeze(score_l2)
 
+            score_logits_dxx = tf.nn.sigmoid_cross_entropy_with_logits(
+                labels=tf.ones_like(l_generator_emaxx),
+                logits=l_generator_emaxx)
+            score_logits_dxx = tf.squeeze(score_logits_dxx)
+
             inter_layer_inp, inter_layer_rct = inter_layer_inp_emaxx, \
                                                inter_layer_rct_emaxx
             fm = inter_layer_inp - inter_layer_rct
             fm = tf.layers.flatten(fm)
-            score_fm = tf.norm(fm, ord=degree, axis=1,
+            score_fm_xx = tf.norm(fm, ord=degree, axis=1,
                                keep_dims=False, name='d_loss')
-            score_fm = tf.squeeze(score_fm)
-
-            score_xx = tf.nn.sigmoid_cross_entropy_with_logits(
-                labels=tf.ones_like(l_generator_emaxx),
-                logits=l_generator_emaxx)
-            score_xx = tf.squeeze(score_xx)
-
+            score_fm_xx = tf.squeeze(score_fm_xx)
             # ______________________________________________________my scores !!!
-            score_zz = tf.nn.sigmoid_cross_entropy_with_logits(
+            score_logits_dzz = tf.nn.sigmoid_cross_entropy_with_logits(
                 labels=tf.ones_like(l_generator_emazz),
                 logits=l_generator_emazz)
-            score_zz = tf.squeeze(score_zz)
+            score_logits_dzz = tf.squeeze(score_logits_dzz)
 
-            score_xxzz = tf.nn.sigmoid_cross_entropy_with_logits(
+            score_logits_dxxzz = tf.nn.sigmoid_cross_entropy_with_logits(
                 labels=tf.ones_like(l_generator_emaxxzz),
                 logits=l_generator_emaxxzz)
-            score_xxzz = tf.squeeze(score_xxzz)
+            score_logits_dxxzz = tf.squeeze(score_logits_dxxzz)
 
-            score_all = score_xx + score_zz + score_xxzz
+            score_logits_all = score_logits_dxx + score_logits_dzz + score_logits_dxxzz
+
+            inter_layer_inp, inter_layer_rct = inter_layer_inp_emaxxzz, \
+                                               inter_layer_rct_emaxxzz
+            fm = inter_layer_inp - inter_layer_rct
+            fm = tf.layers.flatten(fm)
+            score_fm_xxzz = tf.norm(fm, ord=degree, axis=1,
+                               keep_dims=False, name='d_loss')
+            score_fm_xxzz = tf.squeeze(score_fm_xxzz)
 
     if enable_early_stop:
-        rec_error_valid = tf.reduce_mean(score_fm)
+        rec_error_valid = tf.reduce_mean(score_fm_xx)
 
     logdir = create_logdir(dataset, label, random_seed, allow_zz, score_method,
                            do_spectral_norm)
@@ -522,11 +529,10 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
         print('Testing evaluation...')
         scores_l1 = []
         scores_l2 = []
-        scores_fm = []
-        scores_zz = []
-        scores_xx = []
-        scores_xxzz = []
-        scores_all = []
+        scores_logits_dxx = []
+        scores_fm_xx = []
+        scores_logits_all = []
+        scores_fm_xxzz = []
         inference_time = []
 
         # Create scores
@@ -542,11 +548,10 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
             scores_l1 += sess.run(score_l1, feed_dict=feed_dict).tolist()
             scores_l2 += sess.run(score_l2, feed_dict=feed_dict).tolist()
-            scores_fm += sess.run(score_fm, feed_dict=feed_dict).tolist()
-            scores_xx += sess.run(score_xx, feed_dict=feed_dict).tolist()
-            scores_zz += sess.run(score_zz, feed_dict=feed_dict).tolist()
-            scores_xxzz += sess.run(score_xxzz, feed_dict=feed_dict).tolist()
-            scores_all += sess.run(score_all, feed_dict=feed_dict).tolist()
+            scores_fm_xx += sess.run(score_fm_xx, feed_dict=feed_dict).tolist()
+            scores_logits_dxx += sess.run(score_logits_dxx, feed_dict=feed_dict).tolist()
+            scores_fm_xxzz += sess.run(score_fm_xxzz, feed_dict=feed_dict).tolist()
+            scores_logits_all += sess.run(score_logits_all, feed_dict=feed_dict).tolist()
             inference_time.append(time.time() - begin_test_time_batch)
 
         inference_time = np.mean(inference_time)
@@ -560,39 +565,34 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
             bscores_l1 = sess.run(score_l1, feed_dict=feed_dict).tolist()
             bscores_l2 = sess.run(score_l2, feed_dict=feed_dict).tolist()
-            bscores_fm = sess.run(score_fm, feed_dict=feed_dict).tolist()
-            bscores_xx = sess.run(score_xx, feed_dict=feed_dict).tolist()
-            bscores_zz = sess.run(score_zz, feed_dict=feed_dict).tolist()
-            bscores_xxzz = sess.run(score_xxzz, feed_dict=feed_dict).tolist()
-            bscores_all = sess.run(score_all, feed_dict=feed_dict).tolist()
+            bscores_fm_xx = sess.run(score_fm_xx, feed_dict=feed_dict).tolist()
+            bscores_logits_dxx = sess.run(score_logits_dxx, feed_dict=feed_dict).tolist()
+            bscores_fm_xxzz = sess.run(score_fm_xxzz, feed_dict=feed_dict).tolist()
+            bscores_logits_all = sess.run(score_logits_all, feed_dict=feed_dict).tolist()
 
             scores_l1 += bscores_l1[:size]
             scores_l2 += bscores_l2[:size]
-            scores_fm += bscores_fm[:size]
-            scores_xx += bscores_xx[:size]
-            scores_zz += bscores_zz[:size]
-            scores_xxzz += bscores_xxzz[:size]
-            scores_all += bscores_all[:size]
+            scores_fm_xx += bscores_fm_xx[:size]
+            scores_logits_dxx += bscores_logits_dxx[:size]
+            scores_fm_xxzz += bscores_fm_xxzz[:size]
+            scores_logits_all += bscores_logits_all[:size]
 
         model = 'alad_sn{}_dzz{}'.format(do_spectral_norm, allow_zz)
         result_l1 = save_results(scores_l1, testy, model, dataset, 'l1',
                                  'dzzenabled{}'.format(allow_zz), label, random_seed, step)
         result_l2 = save_results(scores_l2, testy, model, dataset, 'l2',
                                  'dzzenabled{}'.format(allow_zz), label, random_seed, step)
-        result_fm = save_results(scores_fm, testy, model, dataset, 'fm',
+        result_fm_xx = save_results(scores_fm_xx, testy, model, dataset, 'fm',
                                  'dzzenabled{}'.format(allow_zz), label, random_seed, step)
-        result_xx = save_results(scores_xx, testy, model, dataset, 'dxx',
+        result_logits_dxx = save_results(scores_logits_dxx, testy, model, dataset, 'dxx',
                                  'dzzenabled{}'.format(allow_zz), label, random_seed, step)
-        result_zz = save_results(scores_zz, testy, model, dataset, 'dzz',
-                                 'dzzenabled{}'.format(allow_zz), label, random_seed, step)
-        result_xxzz = save_results(scores_xxzz, testy, model, dataset, 'dxxzz',
+        result_fm_xxzz = save_results(scores_fm_xxzz, testy, model, dataset, 'dxxzz',
                                    'dzzenabled{}'.format(allow_zz), label, random_seed, step)
-        result_all = save_results(scores_all, testy, model, dataset, 'd_all',
+        result_logits_all = save_results(scores_logits_all, testy, model, dataset, 'd_all',
                                   'dzzenabled{}'.format(allow_zz), label, random_seed, step)
 
         # plot_log(log_loss_dis,"loss discriminator")
-        return result_l1, result_l2, result_fm, \
-               result_xx, result_zz, result_xxzz, result_all
+        return result_l1, result_l2, result_fm_xx,result_logits_dxx, result_fm_xxzz, result_logits_all
 
 
 def run(args):
@@ -618,49 +618,53 @@ def add_result(score_array,x,method):
 
 def describe_result(type_score, results):
     print("Describe Result for ", type_score, " scoring")
-    df_results = pd.DataFrame(results, columns=['precision', 'recall', 'f1', 'roc_auc'])
+    if dataset in IMAGES_DATASETS:
+        df_results = pd.DataFrame(results, columns=['roc_auc'])
+    else :
+        df_results = pd.DataFrame(results, columns=['precision', 'recall', 'f1'])
     print(df_results.describe(include='all')[1:3])
     print("-------------------------------------------")
 
-results_l1, results_l2, results_fm, results_xx, \
-results_zz, results_xxzz, results_all = [], [], [], [], [], [], []
+results_l1, results_l2, results_fm_xx, results_logits_dxx, \
+results_fm_xxzz, results_logits_all = [], [], [], [], [], []
 good_seed = []
-dataset = 'svhn'
-for label in range(10):
-    print(">>>>>>>>>>>>>>>> label set to = ", label, " <<<<<<<<<<<<<<<<<<<<<<")
-    counter = 0
-    random_seed = 0
-    while counter < 3:
-        print("===========================================")
-        print("start round ", counter)
-        print("random seed = ", random_seed)
-        tf.keras.backend.clear_session()
-        tf.reset_default_graph()
-        tf.Graph().as_default()
-        tf.set_random_seed(random_seed)
-        result_l1, result_l2, result_fm, result_xx, result_zz, result_xxzz, result_all = \
-            train_and_test(dataset=dataset, nb_epochs=100, degree=2, random_seed=random_seed
-                           , label=label, allow_zz=True, enable_sm=True, score_method=""
-                           , enable_early_stop=False, do_spectral_norm=True)
-        if result_all[3] > result_fm[3]:
-            # print("find good result result !")
-            good_seed.append(random_seed)
-            results_l1 = add_result(results_l1,result_l1,"l1")
-            results_l2 = add_result(results_l2,result_l2,"l2")
-            results_fm = add_result(results_fm,result_fm,"fm")
-            results_xx = add_result(results_xx,result_xx,"xx")
-            results_zz = add_result(results_zz, result_zz, "zz")
-            results_xxzz = add_result(results_xxzz, result_xxzz, "xxzz")
-            results_all = add_result(results_all, result_all, "all")
-            counter += 1
-        random_seed += 1
+dataset = 'arrhythmia'
+nb_epoches = 100
+# for label in range(10):
+#     print(">>>>>>>>>>>>>>>> label set to = ", label, " <<<<<<<<<<<<<<<<<<<<<<")
+
+label = 1
+counter = 0
+rounds = 10
+random_seed = 0
+while counter < rounds:
+    print("===========================================")
+    print("start round ", counter)
+    print("random seed = ", random_seed)
+    tf.keras.backend.clear_session()
+    tf.reset_default_graph()
+    tf.Graph().as_default()
+    tf.set_random_seed(random_seed)
+    result_l1, result_l2, result_fm_xx, result_logits_dxx, result_fm_xxzz, result_logits_all = \
+        train_and_test(dataset=dataset, nb_epochs=nb_epoches, degree=2, random_seed=random_seed
+                        , label=label, allow_zz=True, enable_sm=True, score_method=""
+                        , enable_early_stop=False, do_spectral_norm=True)
+    if result_logits_all[3] > 0.5152:
+        # print("find good result result !")
+        good_seed.append(random_seed)
+        results_l1 = add_result(results_l1,result_l1,"l1")
+        results_l2 = add_result(results_l2,result_l2,"l2")
+        results_fm_xx = add_result(results_fm_xx,result_fm_xx,"fm_xx")
+        results_logits_dxx = add_result(results_logits_dxx,result_logits_dxx,"logits_dxx")
+        results_fm_xxzz = add_result(results_fm_xxzz, result_fm_xxzz, "fm_xxzz")
+        results_logits_all = add_result(results_logits_all, result_logits_all, "logits_all")
+        counter += 1
+    random_seed += 1
 
 print("good seeds : ", good_seed)
 describe_result('l1', results_l1)
 describe_result('l2', results_l2)
-describe_result('fm', results_fm)
-print("MY SCORES : >>>>>>>>>>>>>>>>>")
-describe_result('score_xx', results_xx)
-describe_result('score_zz', results_zz)
-describe_result('score_xxzz', results_xxzz)
-describe_result('score_all', results_all)
+describe_result('fm_xx', results_fm_xx)
+describe_result('logits_dxx', results_logits_dxx)
+describe_result('fm_xxzz', results_fm_xxzz)
+describe_result('logits_all', results_logits_all)
