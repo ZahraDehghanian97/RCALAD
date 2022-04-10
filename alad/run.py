@@ -607,6 +607,7 @@ def run(args):
 
 def add_result(score_array,x,method):
     global IMAGES_DATASETS,dataset
+    print("----------------------------")
     if dataset in IMAGES_DATASETS:
         print("Testing with method %s: AUROC = %.4f"
               % (method, x[3]))
@@ -617,17 +618,18 @@ def add_result(score_array,x,method):
     return score_array
 
 def describe_result(type_score, results):
-    print("Describe Result for ", type_score, " scoring")
-    if dataset in IMAGES_DATASETS:
-        df_results = pd.DataFrame(results, columns=['roc_auc'])
-    else :
-        df_results = pd.DataFrame(results, columns=['precision', 'recall', 'f1'])
-    print(df_results.describe(include='all')[1:3])
     print("-------------------------------------------")
+    print("Describe Result for ", type_score, " scoring")
+    df_results = pd.DataFrame(results, columns=['precision', 'recall', 'f1','roc_auc'])
+    # if dataset in IMAGES_DATASETS:
+    #     df_results = pd.DataFrame(results, columns=['roc_auc'])
+    # else :
+    #     df_results = pd.DataFrame(results, columns=['precision', 'recall', 'f1'])
+    print(df_results.describe(include='all')[1:3])
 
 results_l1, results_l2, results_fm_xx, results_logits_dxx, \
 results_fm_xxzz, results_logits_all = [], [], [], [], [], []
-good_seed = []
+seeds = []
 dataset = 'arrhythmia'
 nb_epoches = 100
 # for label in range(10):
@@ -649,9 +651,9 @@ while counter < rounds:
         train_and_test(dataset=dataset, nb_epochs=nb_epoches, degree=2, random_seed=random_seed
                         , label=label, allow_zz=True, enable_sm=True, score_method=""
                         , enable_early_stop=False, do_spectral_norm=True)
-    if result_logits_all[3] > 0.5152:
+    if result_logits_all[2] > 0.4:
         # print("find good result result !")
-        good_seed.append(random_seed)
+        seeds.append(random_seed)
         results_l1 = add_result(results_l1,result_l1,"l1")
         results_l2 = add_result(results_l2,result_l2,"l2")
         results_fm_xx = add_result(results_fm_xx,result_fm_xx,"fm_xx")
@@ -661,7 +663,7 @@ while counter < rounds:
         counter += 1
     random_seed += 1
 
-print("good seeds : ", good_seed)
+print("seeds : ", seeds)
 describe_result('l1', results_l1)
 describe_result('l2', results_l2)
 describe_result('fm_xx', results_fm_xx)
