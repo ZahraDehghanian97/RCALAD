@@ -87,6 +87,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
         enable_early_stop (bool): allow early stopping for determining the number of epochs
         do_spectral_norm (bool): allow spectral norm or not for ablation study
      """
+    global alpha ,beta
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True
 
@@ -397,6 +398,8 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                                keep_dims=False, name='d_loss')
             score_fm_xxzz = tf.squeeze(score_fm_xxzz)
 
+            score_alpha_beta = alpha * score_fm_xx + beta*score_logits_all
+
     if enable_early_stop:
         rec_error_valid = tf.reduce_mean(score_fm_xx)
 
@@ -533,6 +536,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
         scores_fm_xx = []
         scores_logits_all = []
         scores_fm_xxzz = []
+        scores_alpha_beta = []
         inference_time = []
 
         # Create scores
@@ -552,6 +556,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             scores_logits_dxx += sess.run(score_logits_dxx, feed_dict=feed_dict).tolist()
             scores_fm_xxzz += sess.run(score_fm_xxzz, feed_dict=feed_dict).tolist()
             scores_logits_all += sess.run(score_logits_all, feed_dict=feed_dict).tolist()
+            scores_alpha_beta+=  sess.run(score_alpha_beta, feed_dict=feed_dict).tolist()
             inference_time.append(time.time() - begin_test_time_batch)
 
         inference_time = np.mean(inference_time)
@@ -569,6 +574,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             bscores_logits_dxx = sess.run(score_logits_dxx, feed_dict=feed_dict).tolist()
             bscores_fm_xxzz = sess.run(score_fm_xxzz, feed_dict=feed_dict).tolist()
             bscores_logits_all = sess.run(score_logits_all, feed_dict=feed_dict).tolist()
+            bscores_alpha_beta = sess.run(score_alpha_beta, feed_dict=feed_dict).tolist()
 
             scores_l1 += bscores_l1[:size]
             scores_l2 += bscores_l2[:size]
@@ -576,6 +582,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             scores_logits_dxx += bscores_logits_dxx[:size]
             scores_fm_xxzz += bscores_fm_xxzz[:size]
             scores_logits_all += bscores_logits_all[:size]
+            scores_alpha_beta+= bscores_alpha_beta[:size]
 
         model = 'alad_sn{}_dzz{}'.format(do_spectral_norm, allow_zz)
         result_l1 = save_results(scores_l1, testy, model, dataset, 'l1',
@@ -590,9 +597,11 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                                    'dzzenabled{}'.format(allow_zz), label, random_seed, step)
         result_logits_all = save_results(scores_logits_all, testy, model, dataset, 'd_all',
                                   'dzzenabled{}'.format(allow_zz), label, random_seed, step)
+        result_alpha_beta = save_results(scores_alpha_beta, testy, model, dataset, 'd_all',
+                                         'dzzenabled{}'.format(allow_zz), label, random_seed, step)
 
         # plot_log(log_loss_dis,"loss discriminator")
-        return result_l1, result_l2, result_fm_xx,result_logits_dxx, result_fm_xxzz, result_logits_all
+        return result_l1, result_l2, result_fm_xx,result_logits_dxx, result_fm_xxzz, result_logits_all,result_alpha_beta
 
 
 def run(args):
@@ -628,8 +637,10 @@ def describe_result(type_score, results):
     print(df_results.describe(include='all')[1:3])
 
 results_l1, results_l2, results_fm_xx, results_logits_dxx, \
-results_fm_xxzz, results_logits_all = [], [], [], [], [], []
+results_fm_xxzz, results_logits_all ,results_alpha_beta= [], [], [], [], [], [],[]
 seeds = []
+alpha = 0.3
+beta = 0.7
 dataset = 'arrhythmia'
 nb_epoches = 100
 # for label in range(10):
@@ -647,7 +658,7 @@ while counter < rounds:
     tf.reset_default_graph()
     tf.Graph().as_default()
     tf.set_random_seed(random_seed)
-    result_l1, result_l2, result_fm_xx, result_logits_dxx, result_fm_xxzz, result_logits_all = \
+    result_l1, result_l2, result_fm_xx, result_logits_dxx, result_fm_xxzz, result_logits_all ,result_alpha_beta= \
         train_and_test(dataset=dataset, nb_epochs=nb_epoches, degree=2, random_seed=random_seed
                         , label=label, allow_zz=True, enable_sm=True, score_method=""
                         , enable_early_stop=False, do_spectral_norm=True)
@@ -660,6 +671,7 @@ while counter < rounds:
         results_logits_dxx = add_result(results_logits_dxx,result_logits_dxx,"logits_dxx")
         results_fm_xxzz = add_result(results_fm_xxzz, result_fm_xxzz, "fm_xxzz")
         results_logits_all = add_result(results_logits_all, result_logits_all, "logits_all")
+        results_alpha_beta= add_result(results_alpha_beta,result_alpha_beta,"alpha_beta")
         counter += 1
     random_seed += 1
 
@@ -670,3 +682,4 @@ describe_result('fm_xx', results_fm_xx)
 describe_result('logits_dxx', results_logits_dxx)
 describe_result('fm_xxzz', results_fm_xxzz)
 describe_result('logits_all', results_logits_all)
+describe_result('alpha_beta', results_alpha_beta)
