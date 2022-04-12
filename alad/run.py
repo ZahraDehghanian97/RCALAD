@@ -636,13 +636,16 @@ def describe_result(type_score, results):
     #     df_results = pd.DataFrame(results, columns=['precision', 'recall', 'f1'])
     print(df_results.describe(include='all')[1:3])
 
-results_l1, results_l2, results_fm_xx, results_logits_dxx, \
-results_fm_xxzz, results_logits_all ,results_alpha_beta= [], [], [], [], [], [],[]
-seeds = []
+
+
 alpha = 0.3
 beta = 0.7
 dataset = 'arrhythmia'
 nb_epoches = 100
+
+seeds = []
+results_l1, results_l2, results_fm_xx, results_logits_dxx, \
+results_fm_xxzz, results_logits_all ,results_alpha_beta= [], [], [], [], [], [],[]
 # for label in range(10):
 #     print(">>>>>>>>>>>>>>>> label set to = ", label, " <<<<<<<<<<<<<<<<<<<<<<")
 
@@ -662,18 +665,26 @@ while counter < rounds:
         train_and_test(dataset=dataset, nb_epochs=nb_epoches, degree=2, random_seed=random_seed
                         , label=label, allow_zz=True, enable_sm=True, score_method=""
                         , enable_early_stop=False, do_spectral_norm=True)
-    if result_logits_all[2] > 0.4:
-        # print("find good result result !")
-        seeds.append(random_seed)
-        results_l1 = add_result(results_l1,result_l1,"l1")
-        results_l2 = add_result(results_l2,result_l2,"l2")
-        results_fm_xx = add_result(results_fm_xx,result_fm_xx,"fm_xx")
-        results_logits_dxx = add_result(results_logits_dxx,result_logits_dxx,"logits_dxx")
-        results_fm_xxzz = add_result(results_fm_xxzz, result_fm_xxzz, "fm_xxzz")
-        results_logits_all = add_result(results_logits_all, result_logits_all, "logits_all")
-        results_alpha_beta= add_result(results_alpha_beta,result_alpha_beta,"alpha_beta")
-        counter += 1
+    seeds.append(random_seed)
+    results_l1 = add_result(results_l1,result_l1,"l1")
+    results_l2 = add_result(results_l2,result_l2,"l2")
+    results_fm_xx = add_result(results_fm_xx,result_fm_xx,"fm_xx")
+    results_logits_dxx = add_result(results_logits_dxx,result_logits_dxx,"logits_dxx")
+    results_fm_xxzz = add_result(results_fm_xxzz, result_fm_xxzz, "fm_xxzz")
+    results_logits_all = add_result(results_logits_all, result_logits_all, "logits_all")
+    results_alpha_beta= add_result(results_alpha_beta,result_alpha_beta,"alpha_beta")
+    counter += 1
     random_seed += 1
+
+# sort part
+indexes = np.array(results_logits_all).argsort()
+results_l1 = np.array(results_l1)[indexes[-10:]]
+results_l2 = np.array(results_l2)[indexes[-10:]]
+results_fm_xx = np.array(results_fm_xx)[indexes[-10:]]
+results_logits_dxx = np.array(results_logits_dxx)[indexes[-10:]]
+results_fm_xxzz = np.array(results_fm_xxzz)[indexes[-10:]]
+results_logits_all = np.array(results_logits_all)[indexes[-10:]]
+results_alpha_beta = np.array(results_alpha_beta)[indexes[-10:]]
 
 print("seeds : ", seeds)
 describe_result('l1', results_l1)
