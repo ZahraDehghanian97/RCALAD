@@ -482,7 +482,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             train_loss_dis_xx /= nr_batches_train
             train_loss_dis_zz /= nr_batches_train
             train_loss_dis_xxzz /= nr_batches_train
-            if epoch % 10 == 0:
+            if epoch % 100 == 0:
                 if allow_zz:
                     print("Epoch %d | time = %ds | loss gen = %.4f | loss enc = %.4f | "
                           "loss dis = %.4f | loss dis xz = %.4f | loss dis xx = %.4f | "
@@ -641,7 +641,7 @@ def describe_result(type_score, results):
 alpha = 0.3
 beta = 0.7
 dataset = 'arrhythmia'
-nb_epoches = 100
+nb_epoches = 1000
 
 seeds = []
 results_l1, results_l2, results_fm_xx, results_logits_dxx, \

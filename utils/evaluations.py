@@ -214,7 +214,7 @@ def save_results(scores, true_labels, model, dataset, method, weight, label,
 
     per = get_percentile(scores, dataset)
     y_pred = (scores >= per)
-    print("-----------------------------")
+    # print("-----------------------------")
     # print(y_pred)
     # print(scores)
     # print(per)
