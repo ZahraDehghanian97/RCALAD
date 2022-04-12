@@ -651,7 +651,7 @@ results_fm_xxzz, results_logits_all ,results_alpha_beta= [], [], [], [], [], [],
 
 label = 1
 counter = 0
-rounds = 10
+rounds = 100
 random_seed = 0
 while counter < rounds:
     print("===========================================")
@@ -677,7 +677,8 @@ while counter < rounds:
     random_seed += 1
 
 # sort part
-indexes = np.array(results_logits_all).argsort()
+indexes = np.array(results_logits_all)[:,2].argsort()
+seeds = np.array(seeds)[indexes[-10:]]
 results_l1 = np.array(results_l1)[indexes[-10:]]
 results_l2 = np.array(results_l2)[indexes[-10:]]
 results_fm_xx = np.array(results_fm_xx)[indexes[-10:]]
