@@ -638,10 +638,10 @@ def describe_result(type_score, results):
 
 
 
-alpha = 0.3
-beta = 0.7
-dataset = 'kdd'
-nb_epoches = 35
+alpha = 0.7
+beta = 0.3
+dataset = 'cifar10'
+nb_epoches = 100
 
 seeds = []
 results_l1, results_l2, results_fm_xx, results_logits_dxx, \
@@ -649,9 +649,9 @@ results_fm_xxzz, results_logits_all ,results_alpha_beta= [], [], [], [], [], [],
 # for label in range(10):
 #     print(">>>>>>>>>>>>>>>> label set to = ", label, " <<<<<<<<<<<<<<<<<<<<<<")
 
-label = 1
+label = 0
 counter = 0
-rounds = 100
+rounds = 10
 random_seed = 0
 while counter < rounds:
     print("===========================================")
@@ -677,15 +677,15 @@ while counter < rounds:
     random_seed += 1
 
 # sort part
-indexes = np.array(results_logits_all)[:,2].argsort()
-seeds = np.array(seeds)[indexes[-10:]]
-results_l1 = np.array(results_l1)[indexes[-10:]]
-results_l2 = np.array(results_l2)[indexes[-10:]]
-results_fm_xx = np.array(results_fm_xx)[indexes[-10:]]
-results_logits_dxx = np.array(results_logits_dxx)[indexes[-10:]]
-results_fm_xxzz = np.array(results_fm_xxzz)[indexes[-10:]]
-results_logits_all = np.array(results_logits_all)[indexes[-10:]]
-results_alpha_beta = np.array(results_alpha_beta)[indexes[-10:]]
+indexes = np.array(results_alpha_beta)[:,2].argsort()
+seeds = np.array(seeds)[indexes[-2:]]
+results_l1 = np.array(results_l1)[indexes[-2:]]
+results_l2 = np.array(results_l2)[indexes[-2:]]
+results_fm_xx = np.array(results_fm_xx)[indexes[-2:]]
+results_logits_dxx = np.array(results_logits_dxx)[indexes[-2:]]
+results_fm_xxzz = np.array(results_fm_xxzz)[indexes[-2:]]
+results_logits_all = np.array(results_logits_all)[indexes[-2:]]
+results_alpha_beta = np.array(results_alpha_beta)[indexes[-2:]]
 
 print("seeds : ", seeds)
 describe_result('l1', results_l1)
