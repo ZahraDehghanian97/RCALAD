@@ -677,7 +677,7 @@ while counter < rounds:
     random_seed += 1
 
 # sort part
-indexes = np.array(results_fm_xxzz)[:,2].argsort()
+indexes = np.array(results_fm_xxzz)[:,3].argsort()
 seeds = np.array(seeds)[indexes[-2:]]
 results_l1 = np.array(results_l1)[indexes[-2:]]
 results_l2 = np.array(results_l2)[indexes[-2:]]
