@@ -643,19 +643,20 @@ dataset = 'cifar10'
 epoches = 100
 metric = 3  # accuracy precision fm auroc
 nb_seed = 3
+label = 0
+rounds = 10
 score = None
 
 alpha = 0.7
 beta = 0.3
 seeds = []
+counter = 0
 results_l1, results_l2, results_fm_xx, results_logits_dxx, \
 results_fm_xxzz, results_logits_all, results_alpha_beta = [], [], [], [], [], [], []
 # for label in range(10):
 #     print(">>>>>>>>>>>>>>>> label set to = ", label, " <<<<<<<<<<<<<<<<<<<<<<")
 
-label = 0
-counter = 0
-rounds = 10
+
 random_seed = 0
 while counter < rounds:
     print("===========================================")
