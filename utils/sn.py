@@ -23,7 +23,7 @@ def dense(inputs, units, use_bias=True, kernel_initializer=None,
           name=None,reuse=None):
 
     with tf.variable_scope(name, reuse=reuse):
-        inputs = tf.contrib.layers.flatten(inputs)
+        inputs = tf.layers.flatten(inputs)
         shape = inputs.get_shape().as_list()
         channels = shape[-1]
 
