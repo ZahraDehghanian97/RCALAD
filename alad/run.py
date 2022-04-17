@@ -642,7 +642,7 @@ def describe_result(type_score, results):
 dataset = 'cifar10'
 epoches = 100
 metric = 3  # accuracy precision fm auroc
-nb_seed = 3
+nb_seed = -3
 label = 0
 rounds = 10
 score = None
