@@ -106,6 +106,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
     # Placeholders
     x_pl = tf.placeholder(tf.float32, shape=data.get_shape_input(), name="input_x")
+    x_pl_t = tf.placeholder(tf.float32, shape=data.get_shape_input(), name="input_x_t")
     z_pl = tf.placeholder(tf.float32, shape=[None, latent_dim], name="input_z")
     is_training_pl = tf.placeholder(tf.bool, [], name='is_training_pl')
     learning_rate = tf.placeholder(tf.float32, shape=(), name="lr_pl")
@@ -136,6 +137,8 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     with tf.variable_scope('encoder_model'):
         z_gen = enc(x_pl, is_training=is_training_pl,
                     do_spectral_norm=do_spectral_norm)
+        z_gen_t = enc(x_pl_t, is_training=is_training_pl,
+                      do_spectral_norm=do_spectral_norm, reuse=True)
 
     with tf.variable_scope('generator_model'):
         x_gen = gen(z_pl, is_training=is_training_pl)
@@ -153,6 +156,10 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                                                  is_training=is_training_pl,
                                                  reuse=True,
                                                  do_spectral_norm=do_spectral_norm)
+        l_t, = dis_xz(x_pl_t, z_gen_t,
+                      is_training=is_training_pl,
+                      reuse=True,
+                      do_spectral_norm=do_spectral_norm)
 
     with tf.variable_scope('discriminator_model_xx'):
         x_logit_real, inter_layer_inp_xx = dis_xx(x_pl, x_pl,
@@ -180,7 +187,9 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             labels=tf.ones_like(l_encoder), logits=l_encoder))
         loss_dis_gen = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
             labels=tf.zeros_like(l_generator), logits=l_generator))
-        dis_loss_xz = loss_dis_gen + loss_dis_enc
+        loss_dis_t = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
+            labels=tf.zeros_like(l_t), logits=l_t))
+        dis_loss_xz = loss_dis_gen + loss_dis_enc + loss_dis_t
 
         # discriminator xx
         x_real_dis = tf.nn.sigmoid_cross_entropy_with_logits(
@@ -226,7 +235,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
         cost_x = tf.reduce_mean(x_real_gen + x_fake_gen)
         cost_z = tf.reduce_mean(z_real_gen + z_fake_gen)
-        cost_xz = 0  # tf.reduce_mean(xz_real_gen + xz_fake_gen)
+        cost_xz =0# tf.reduce_mean(xz_real_gen + xz_fake_gen)
 
         cycle_consistency_loss = cost_x + cost_z + cost_xz if allow_zz else cost_x + cost_xz
         loss_generator = gen_loss_xz + cycle_consistency_loss
