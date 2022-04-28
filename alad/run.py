@@ -117,6 +117,8 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     trainx_copy = trainx.copy()
     if enable_early_stop: validx, validy = data.get_valid(label)
     testx, testy = data.get_test(label)
+    trainx_t = np.random.normal(size=trainx.shape)
+    trainy_t = np.random.normal(size=trainy.shape)
     print(trainx.shape)
     rng = np.random.RandomState(random_seed)
     nr_batches_train = int(trainx.shape[0] / batch_size)
@@ -314,6 +316,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                         getter=get_getter(gen_ema), reuse=True)
         x_gen_ema = gen(z_pl, is_training=is_training_pl,
                         getter=get_getter(gen_ema), reuse=True)
+
     with tf.variable_scope('encoder_model'):
         rec_z_ema = enc(x_gen_ema, is_training=is_training_pl,
                         getter=get_getter(enc_ema), reuse=True,
@@ -438,6 +441,8 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             # construct randomly permuted minibatches
             trainx = trainx[rng.permutation(trainx.shape[0])]  # shuffling dataset
             trainx_copy = trainx_copy[rng.permutation(trainx.shape[0])]
+            trainx_t = trainx_t[rng.permutation(trainx_t.shape[0])]  # shuffling dataset
+            trainx_copy_t = trainx_copy_t[rng.permutation(trainx_t.shape[0])]
             train_loss_dis_xz, train_loss_dis_xx, train_loss_dis_zz, train_loss_dis_xxzz, \
             train_loss_dis, train_loss_gen, train_loss_enc = [0, 0, 0, 0, 0, 0, 0]
 
@@ -449,6 +454,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
                 # train discriminator
                 feed_dict = {x_pl: trainx[ran_from:ran_to],
+                             x_pl_t: trainx_t[ran_from:ran_to],
                              z_pl: np.random.normal(size=[batch_size, latent_dim]),
                              is_training_pl: True,
                              learning_rate: lr}
@@ -471,6 +477,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
                 # train generator and encoder
                 feed_dict = {x_pl: trainx_copy[ran_from:ran_to],
+                             x_pl_t: trainx_copy_t[ran_from:ran_to],
                              z_pl: np.random.normal(size=[batch_size, latent_dim]),
                              is_training_pl: True,
                              learning_rate: lr}
@@ -513,6 +520,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
                 valid_loss = 0
                 feed_dict = {x_pl: validx,
+                             x_pl_t : validx,
                              z_pl: np.random.normal(size=[validx.shape[0], latent_dim]),
                              is_training_pl: False}
                 vl, lat = sess.run([rec_error_valid, rec_z], feed_dict=feed_dict)
@@ -641,10 +649,6 @@ def describe_result(type_score, results):
     print("-------------------------------------------")
     print("Describe Result for ", type_score, " scoring")
     df_results = pd.DataFrame(results, columns=['precision', 'recall', 'f1', 'roc_auc'])
-    # if dataset in IMAGES_DATASETS:
-    #     df_results = pd.DataFrame(results, columns=['roc_auc'])
-    # else :
-    #     df_results = pd.DataFrame(results, columns=['precision', 'recall', 'f1'])
     print(df_results.describe(include='all')[1:3])
 
 
@@ -662,8 +666,7 @@ seeds = []
 counter = 0
 results_l1, results_l2, results_fm_xx, results_logits_dxx, \
 results_fm_xxzz, results_logits_all, results_alpha_beta = [], [], [], [], [], [], []
-# for label in range(10):
-#     print(">>>>>>>>>>>>>>>> label set to = ", label, " <<<<<<<<<<<<<<<<<<<<<<")
+print(">>>>>>>>>>>>>>>> label set to = ", label, " <<<<<<<<<<<<<<<<<<<<<<")
 
 
 random_seed = 0
