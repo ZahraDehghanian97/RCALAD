@@ -118,6 +118,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     if enable_early_stop: validx, validy = data.get_valid(label)
     testx, testy = data.get_test(label)
     trainx_t = np.random.normal(size=trainx.shape)
+    trainx_t_copy = trainx_t.copy()
     trainy_t = np.random.normal(size=trainy.shape)
     print(trainx.shape)
     rng = np.random.RandomState(random_seed)
@@ -158,7 +159,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                                                  is_training=is_training_pl,
                                                  reuse=True,
                                                  do_spectral_norm=do_spectral_norm)
-        l_t, = dis_xz(x_pl_t, z_gen_t,
+        l_t, _ = dis_xz(x_pl_t, z_gen_t,
                       is_training=is_training_pl,
                       reuse=True,
                       do_spectral_norm=do_spectral_norm)
@@ -220,8 +221,11 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
         # generator and encoder
         gen_loss_xz = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
             labels=tf.ones_like(l_generator), logits=l_generator))
+        gen_loss_xz_t = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
+            labels=tf.ones_like(l_t), logits=l_t))
         enc_loss_xz = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
             labels=tf.zeros_like(l_encoder), logits=l_encoder))
+
         x_real_gen = tf.nn.sigmoid_cross_entropy_with_logits(
             logits=x_logit_real, labels=tf.zeros_like(x_logit_real))
         x_fake_gen = tf.nn.sigmoid_cross_entropy_with_logits(
@@ -237,10 +241,10 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
         cost_x = tf.reduce_mean(x_real_gen + x_fake_gen)
         cost_z = tf.reduce_mean(z_real_gen + z_fake_gen)
-        cost_xz =0# tf.reduce_mean(xz_real_gen + xz_fake_gen)
+        cost_xz = tf.reduce_mean(xz_real_gen + xz_fake_gen)
 
         cycle_consistency_loss = cost_x + cost_z + cost_xz if allow_zz else cost_x + cost_xz
-        loss_generator = gen_loss_xz + cycle_consistency_loss
+        loss_generator = gen_loss_xz +gen_loss_xz_t+ cycle_consistency_loss
         loss_encoder = enc_loss_xz + cycle_consistency_loss
 
     with tf.name_scope('optimizers'):
@@ -287,103 +291,103 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
         with tf.control_dependencies(update_ops_dis_xxzz):
             dis_op_xxzz = optimizer.minimize(dis_loss_xxzz, var_list=dxxzzvars)
 
-        # Exponential Moving Average for inference
-        def train_op_with_ema_dependency(vars, op):
-            ema = tf.train.ExponentialMovingAverage(decay=ema_decay)
-            maintain_averages_op = ema.apply(vars)
-            with tf.control_dependencies([op]):
-                train_op = tf.group(maintain_averages_op)
-            return train_op, ema
+        # # Exponential Moving Average for inference
+        # def train_op_with_ema_dependency(vars, op):
+        #     ema = tf.train.ExponentialMovingAverage(decay=ema_decay)
+        #     maintain_averages_op = ema.apply(vars)
+        #     with tf.control_dependencies([op]):
+        #         train_op = tf.group(maintain_averages_op)
+        #     return train_op, ema
 
-        train_gen_op, gen_ema = train_op_with_ema_dependency(gvars, gen_op)
-        train_enc_op, enc_ema = train_op_with_ema_dependency(evars, enc_op)
-        train_dis_op_xz, xz_ema = train_op_with_ema_dependency(dxzvars,
-                                                               dis_op_xz)
-        train_dis_op_xx, xx_ema = train_op_with_ema_dependency(dxxvars,
-                                                               dis_op_xx)
-        train_dis_op_zz, zz_ema = train_op_with_ema_dependency(dzzvars,
-                                                               dis_op_zz)
-        train_dis_op_xxzz, xxzz_ema = train_op_with_ema_dependency(dxxzzvars,
-                                                                   dis_op_xxzz)
+        # train_gen_op, gen_ema = train_op_with_ema_dependency(gvars, gen_op)
+        # train_enc_op, enc_ema = train_op_with_ema_dependency(evars, enc_op)
+        # train_dis_op_xz, xz_ema = train_op_with_ema_dependency(dxzvars,
+        #                                                        dis_op_xz)
+        # train_dis_op_xx, xx_ema = train_op_with_ema_dependency(dxxvars,
+        #                                                        dis_op_xx)
+        # train_dis_op_zz, zz_ema = train_op_with_ema_dependency(dzzvars,
+        #                                                        dis_op_zz)
+        # train_dis_op_xxzz, xxzz_ema = train_op_with_ema_dependency(dxxzzvars,
+        #                                                            dis_op_xxzz)
 
-    with tf.variable_scope('encoder_model'):
-        z_gen_ema = enc(x_pl, is_training=is_training_pl,
-                        getter=get_getter(enc_ema), reuse=True,
-                        do_spectral_norm=do_spectral_norm)
+    # with tf.variable_scope('encoder_model'):
+    #     z_gen_ema = enc(x_pl, is_training=is_training_pl,
+    #                     getter=get_getter(enc_ema), reuse=True,
+    #                     do_spectral_norm=do_spectral_norm)
 
-    with tf.variable_scope('generator_model'):
-        rec_x_ema = gen(z_gen_ema, is_training=is_training_pl,
-                        getter=get_getter(gen_ema), reuse=True)
-        x_gen_ema = gen(z_pl, is_training=is_training_pl,
-                        getter=get_getter(gen_ema), reuse=True)
+    # with tf.variable_scope('generator_model'):
+    #     rec_x_ema = gen(z_gen_ema, is_training=is_training_pl,
+    #                     getter=get_getter(gen_ema), reuse=True)
+    #     x_gen_ema = gen(z_pl, is_training=is_training_pl,
+    #                     getter=get_getter(gen_ema), reuse=True)
 
-    with tf.variable_scope('encoder_model'):
-        rec_z_ema = enc(x_gen_ema, is_training=is_training_pl,
-                        getter=get_getter(enc_ema), reuse=True,
-                        do_spectral_norm=do_spectral_norm)
+    # with tf.variable_scope('encoder_model'):
+    #     rec_z_ema = enc(x_gen_ema, is_training=is_training_pl,
+    #                     getter=get_getter(enc_ema), reuse=True,
+    #                     do_spectral_norm=do_spectral_norm)
 
-    with tf.variable_scope('discriminator_model_xx'):
-        l_encoder_emaxx, inter_layer_inp_emaxx = dis_xx(x_pl, x_pl,
-                                                        is_training=is_training_pl,
-                                                        getter=get_getter(xx_ema),
-                                                        reuse=True,
-                                                        do_spectral_norm=do_spectral_norm)
+    # with tf.variable_scope('discriminator_model_xx'):
+    #     l_encoder_emaxx, inter_layer_inp_emaxx = dis_xx(x_pl, x_pl,
+    #                                                     is_training=is_training_pl,
+    #                                                     getter=get_getter(xx_ema),
+    #                                                     reuse=True,
+    #                                                     do_spectral_norm=do_spectral_norm)
 
-        l_generator_emaxx, inter_layer_rct_emaxx = dis_xx(x_pl, rec_x_ema,
-                                                          is_training=is_training_pl,
-                                                          getter=get_getter(
-                                                              xx_ema),
-                                                          reuse=True,
-                                                          do_spectral_norm=do_spectral_norm)
-    with tf.variable_scope('discriminator_model_zz'):
-        l_encoder_emazz, inter_layer_inp_emazz = dis_zz(z_pl, z_pl,
-                                                        is_training=is_training_pl,
-                                                        getter=get_getter(zz_ema),
-                                                        reuse=True,
-                                                        do_spectral_norm=do_spectral_norm)
+    #     l_generator_emaxx, inter_layer_rct_emaxx = dis_xx(x_pl, rec_x_ema,
+    #                                                       is_training=is_training_pl,
+    #                                                       getter=get_getter(
+    #                                                           xx_ema),
+    #                                                       reuse=True,
+    #                                                       do_spectral_norm=do_spectral_norm)
+    # with tf.variable_scope('discriminator_model_zz'):
+    #     l_encoder_emazz, inter_layer_inp_emazz = dis_zz(z_pl, z_pl,
+    #                                                     is_training=is_training_pl,
+    #                                                     getter=get_getter(zz_ema),
+    #                                                     reuse=True,
+    #                                                     do_spectral_norm=do_spectral_norm)
 
-        l_generator_emazz, inter_layer_rct_emazz = dis_zz(z_pl, rec_z_ema,
-                                                          is_training=is_training_pl,
-                                                          getter=get_getter(
-                                                              zz_ema),
-                                                          reuse=True,
-                                                          do_spectral_norm=do_spectral_norm)
+    #     l_generator_emazz, inter_layer_rct_emazz = dis_zz(z_pl, rec_z_ema,
+    #                                                       is_training=is_training_pl,
+    #                                                       getter=get_getter(
+    #                                                           zz_ema),
+    #                                                       reuse=True,
+    #                                                       do_spectral_norm=do_spectral_norm)
 
-    with tf.variable_scope('discriminator_model_xxzz'):
-        l_encoder_emaxxzz, inter_layer_inp_emaxxzz = dis_xxzz(x_pl, x_pl, z_pl, z_pl,
-                                                              is_training=is_training_pl,
-                                                              getter=get_getter(xxzz_ema),
-                                                              reuse=True,
-                                                              do_spectral_norm=do_spectral_norm)
+    # with tf.variable_scope('discriminator_model_xxzz'):
+    #     l_encoder_emaxxzz, inter_layer_inp_emaxxzz = dis_xxzz(x_pl, x_pl, z_pl, z_pl,
+    #                                                           is_training=is_training_pl,
+    #                                                           getter=get_getter(xxzz_ema),
+    #                                                           reuse=True,
+    #                                                           do_spectral_norm=do_spectral_norm)
 
-        l_generator_emaxxzz, inter_layer_rct_emaxxzz = dis_xxzz(x_pl, rec_x_ema, z_pl, z_gen_ema,
-                                                                is_training=is_training_pl,
-                                                                getter=get_getter(xxzz_ema),
-                                                                reuse=True,
-                                                                do_spectral_norm=do_spectral_norm)
+    #     l_generator_emaxxzz, inter_layer_rct_emaxxzz = dis_xxzz(x_pl, rec_x_ema, z_pl, z_gen_ema,
+    #                                                             is_training=is_training_pl,
+    #                                                             getter=get_getter(xxzz_ema),
+    #                                                             reuse=True,
+    #                                                             do_spectral_norm=do_spectral_norm)
     log_loss_dis = []
     with tf.name_scope('Testing'):
 
         with tf.variable_scope('Scores'):
-            rec = x_pl - rec_x_ema
+            rec = x_pl - rec_x
             rec = tf.layers.flatten(rec)
             score_l1 = tf.norm(rec, ord=1, axis=1,
                                keep_dims=False, name='d_loss')
             score_l1 = tf.squeeze(score_l1)
 
-            rec = x_pl - rec_x_ema
+            rec = x_pl - rec_x
             rec = tf.layers.flatten(rec)
             score_l2 = tf.norm(rec, ord=2, axis=1,
                                keep_dims=False, name='d_loss')
             score_l2 = tf.squeeze(score_l2)
 
             score_logits_dxx = tf.nn.sigmoid_cross_entropy_with_logits(
-                labels=tf.ones_like(l_generator_emaxx),
-                logits=l_generator_emaxx)
+                labels=tf.ones_like(x_logit_fake),
+                logits=x_logit_fake)
             score_logits_dxx = tf.squeeze(score_logits_dxx)
 
-            inter_layer_inp, inter_layer_rct = inter_layer_inp_emaxx, \
-                                               inter_layer_rct_emaxx
+            inter_layer_inp, inter_layer_rct = inter_layer_inp_xx, \
+                                               inter_layer_rct_xx
             fm = inter_layer_inp - inter_layer_rct
             fm = tf.layers.flatten(fm)
             score_fm_xx = tf.norm(fm, ord=degree, axis=1,
@@ -391,19 +395,19 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             score_fm_xx = tf.squeeze(score_fm_xx)
             # ______________________________________________________my scores !!!
             score_logits_dzz = tf.nn.sigmoid_cross_entropy_with_logits(
-                labels=tf.ones_like(l_generator_emazz),
-                logits=l_generator_emazz)
+                labels=tf.ones_like(z_logit_fake),
+                logits=z_logit_fake)
             score_logits_dzz = tf.squeeze(score_logits_dzz)
 
             score_logits_dxxzz = tf.nn.sigmoid_cross_entropy_with_logits(
-                labels=tf.ones_like(l_generator_emaxxzz),
-                logits=l_generator_emaxxzz)
+                labels=tf.ones_like(x_logit_fake),
+                logits=x_logit_fake)
             score_logits_dxxzz = tf.squeeze(score_logits_dxxzz)
 
             score_logits_all = score_logits_dxx + score_logits_dzz + score_logits_dxxzz
 
-            inter_layer_inp, inter_layer_rct = inter_layer_inp_emaxxzz, \
-                                               inter_layer_rct_emaxxzz
+            # inter_layer_inp, inter_layer_rct = inter_layer_inp_emaxxzz, \
+            #                                    inter_layer_rct_emaxxzz
             fm = inter_layer_inp - inter_layer_rct
             fm = tf.layers.flatten(fm)
             score_fm_xxzz = tf.norm(fm, ord=degree, axis=1,
@@ -442,7 +446,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             trainx = trainx[rng.permutation(trainx.shape[0])]  # shuffling dataset
             trainx_copy = trainx_copy[rng.permutation(trainx.shape[0])]
             trainx_t = trainx_t[rng.permutation(trainx_t.shape[0])]  # shuffling dataset
-            trainx_copy_t = trainx_copy_t[rng.permutation(trainx_t.shape[0])]
+            trainx_t_copy = trainx_t_copy[rng.permutation(trainx_t.shape[0])]
             train_loss_dis_xz, train_loss_dis_xx, train_loss_dis_zz, train_loss_dis_xxzz, \
             train_loss_dis, train_loss_gen, train_loss_enc = [0, 0, 0, 0, 0, 0, 0]
 
@@ -477,7 +481,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
                 # train generator and encoder
                 feed_dict = {x_pl: trainx_copy[ran_from:ran_to],
-                             x_pl_t: trainx_copy_t[ran_from:ran_to],
+                             x_pl_t: trainx_t_copy[ran_from:ran_to],
                              z_pl: np.random.normal(size=[batch_size, latent_dim]),
                              is_training_pl: True,
                              learning_rate: lr}
@@ -498,7 +502,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             train_loss_dis_xx /= nr_batches_train
             train_loss_dis_zz /= nr_batches_train
             train_loss_dis_xxzz /= nr_batches_train
-            if epoch % 10 == 0:
+            if epoch % 100 == 0:
                 if allow_zz:
                     print("Epoch %d | time = %ds | loss gen = %.4f | loss enc = %.4f | "
                           "loss dis = %.4f | loss dis xz = %.4f | loss dis xx = %.4f | "
@@ -652,16 +656,16 @@ def describe_result(type_score, results):
     print(df_results.describe(include='all')[1:3])
 
 
-dataset = 'cifar10'
-epoches = 100
+dataset = 'arrhythmia'
+epoches = 1000
 metric = 3  # accuracy precision fm auroc
-nb_seed = -3
-label = 0
-rounds = 10
+nb_seed = -10
+label = 1
+rounds = 35
 score = None
 
-alpha = 0.7
-beta = 0.3
+alpha = 0.3
+beta = 0.7
 seeds = []
 counter = 0
 results_l1, results_l2, results_fm_xx, results_logits_dxx, \
@@ -694,7 +698,7 @@ while counter < rounds:
     random_seed += 1
 
 # sort part
-score = results_fm_xxzz
+score = results_logits_all
 indexes = np.array(score)[:, metric].argsort()
 seeds = np.array(seeds)[indexes[nb_seed:]]
 results_l1 = np.array(results_l1)[indexes[nb_seed:]]
