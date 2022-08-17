@@ -24,7 +24,6 @@ from utils.constants import IMAGES_DATASETS
 
 FREQ_PRINT = 200  # print frequency image tensorboard [20]
 FREQ_EV = 1
-PATIENCE = 10
 
 
 def get_getter(ema):  # to update neural net with moving avg variables, suitable for ss learning cf Saliman
@@ -37,18 +36,17 @@ def get_getter(ema):  # to update neural net with moving avg variables, suitable
 
 
 def display_parameters(batch_size, starting_lr, ema_decay, degree, label,
-                       allow_zz, score_method, do_spectral_norm, nb_epochs):
+                       allow_zz, do_spectral_norm, nb_epochs):
     """See parameters
     """
     print("Number of Epochs: ", nb_epochs)
     print('Batch size: ', batch_size)
-    # print('Starting learning rate: ', starting_lr)
-    # print('EMA Decay: ', ema_decay)
+    print('Starting learning rate: ', starting_lr)
+    print('EMA Decay: ', ema_decay)
     print('Degree for L norms: ', degree)
-    # print('Anomalous label: ', label)
-    # print('Score method: ', score_method)
+    print('Anomalous label: ', label)
     print('Discriminator zz enabled: ', allow_zz)
-    # print('Spectral Norm enabled: ', do_spectral_norm)
+    print('Spectral Norm enabled: ', do_spectral_norm)
 
 
 def display_progression_epoch(j, id_max):
@@ -60,17 +58,15 @@ def display_progression_epoch(j, id_max):
 
 
 def create_logdir(dataset, label, rd,
-                  allow_zz, score_method, do_spectral_norm):
+                  allow_zz, do_spectral_norm):
     """ Directory to save training logs, weights, biases, etc."""
     model = 'alad_sn{}_dzz{}'.format(do_spectral_norm, allow_zz)
     return "../../train_logs/{}_{}_dzzenabled{}_{}_label{}" \
-           "rd{}".format(dataset, model, allow_zz,
-                         score_method, label, rd)
+           "rd{}".format(dataset, model, allow_zz, label, rd)
 
 
 def train_and_test(dataset, nb_epochs, degree, random_seed, label,
-                   allow_zz, enable_sm, score_method,
-                   enable_early_stop, do_spectral_norm):
+                   allow_zz, do_spectral_norm):
     """
     Note:
         Saves summaries on tensorboard. To display them, please use cmd line
@@ -83,8 +79,6 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
         label (int): label which is normal for image experiments
         allow_zz (bool): allow the d_zz discriminator or not for ablation study
         enable_sm (bool): allow TF summaries for monitoring the training
-        score_method (str): which metric to use for the ablation study
-        enable_early_stop (bool): allow early stopping for determining the number of epochs
         do_spectral_norm (bool): allow spectral norm or not for ablation study
      """
     global alpha, beta
@@ -114,7 +108,6 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     print('Data loading...')
     trainx, trainy = data.get_train(label)
     trainx_copy = trainx.copy()
-    if enable_early_stop: validx, validy = data.get_valid(label)
     testx, testy = data.get_test(label)
     print(trainx.shape)
     rng = np.random.RandomState(random_seed)
@@ -124,7 +117,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     print('Building graph...')
     print("ALAD is training with the following parameters:")
     display_parameters(batch_size, starting_lr, ema_decay, degree, label,
-                       allow_zz, score_method, do_spectral_norm, nb_epochs)
+                       allow_zz, do_spectral_norm, nb_epochs)
 
     gen = network.decoder
     enc = network.encoder
@@ -353,31 +346,12 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     with tf.name_scope('Testing'):
 
         with tf.variable_scope('Scores'):
-            rec = x_pl - rec_x_ema
-            rec = tf.layers.flatten(rec)
-            score_l1 = tf.norm(rec, ord=1, axis=1,
-                               keep_dims=False, name='d_loss')
-            score_l1 = tf.squeeze(score_l1)
-
-            rec = x_pl - rec_x_ema
-            rec = tf.layers.flatten(rec)
-            score_l2 = tf.norm(rec, ord=2, axis=1,
-                               keep_dims=False, name='d_loss')
-            score_l2 = tf.squeeze(score_l2)
 
             score_logits_dxx = tf.nn.sigmoid_cross_entropy_with_logits(
                 labels=tf.ones_like(l_generator_emaxx),
                 logits=l_generator_emaxx)
             score_logits_dxx = tf.squeeze(score_logits_dxx)
 
-            inter_layer_inp, inter_layer_rct = inter_layer_inp_emaxx, \
-                                               inter_layer_rct_emaxx
-            fm = inter_layer_inp - inter_layer_rct
-            fm = tf.layers.flatten(fm)
-            score_fm_xx = tf.norm(fm, ord=degree, axis=1,
-                                  keep_dims=False, name='d_loss')
-            score_fm_xx = tf.squeeze(score_fm_xx)
-            # ______________________________________________________my scores !!!
             score_logits_dzz = tf.nn.sigmoid_cross_entropy_with_logits(
                 labels=tf.ones_like(l_generator_emazz),
                 logits=l_generator_emazz)
@@ -398,12 +372,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                                     keep_dims=False, name='d_loss')
             score_fm_xxzz = tf.squeeze(score_fm_xxzz)
 
-            score_alpha_beta = alpha * score_fm_xx + beta * score_logits_all
-
-    if enable_early_stop:
-        rec_error_valid = tf.reduce_mean(score_fm_xx)
-
-    logdir = create_logdir(dataset, label, random_seed, allow_zz, score_method,
+    logdir = create_logdir(dataset, label, random_seed, allow_zz,
                            do_spectral_norm)
 
     saver = tf.train.Saver(max_to_keep=2)
@@ -414,12 +383,8 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     with sv.managed_session(config=config) as sess:
 
         step = sess.run(global_step)
-        # print('Initialization done at step {}'.format(step / nr_batches_train))
-        # writer = tf.summary.FileWriter(logdir, sess.graph)
         train_batch = 0
         epoch = 0
-        best_valid_loss = 0
-        request_stop = False
 
         while not sv.should_stop() and epoch < nb_epochs:
 
@@ -499,44 +464,13 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                              train_loss_dis_xx, train_loss_dis_xxzz))
 
             log_loss_dis.append(train_loss_dis)
-            ##EARLY STOPPING
-            if (epoch + 1) % FREQ_EV == 0 and enable_early_stop:
-
-                valid_loss = 0
-                feed_dict = {x_pl: validx,
-                             z_pl: np.random.normal(size=[validx.shape[0], latent_dim]),
-                             is_training_pl: False}
-                vl, lat = sess.run([rec_error_valid, rec_z], feed_dict=feed_dict)
-                valid_loss += vl
-
-                print('Validation: valid loss {:.4f}'.format(valid_loss))
-
-                if (valid_loss < best_valid_loss or epoch == FREQ_EV - 1):
-                    best_valid_loss = valid_loss
-                    print("Best model - valid loss = {:.4f} - saving...".format(best_valid_loss))
-                    # sv.saver.save(sess, logdir + '/model.ckpt', global_step=step)
-                    nb_without_improvements = 0
-                else:
-                    nb_without_improvements += FREQ_EV
-
-                if nb_without_improvements > PATIENCE:
-                    sv.request_stop()
-                    print(
-                        "Early stopping at epoch {} with weights from epoch {}".format(
-                            epoch, epoch - nb_without_improvements))
-
             epoch += 1
 
         # sv.saver.save(sess, logdir + '/model.ckpt', global_step=step)
 
         print('Testing evaluation...')
-        scores_l1 = []
-        scores_l2 = []
-        scores_logits_dxx = []
-        scores_fm_xx = []
         scores_logits_all = []
         scores_fm_xxzz = []
-        scores_alpha_beta = []
         inference_time = []
 
         # Create scores
@@ -550,13 +484,8 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                          z_pl: np.random.normal(size=[batch_size, latent_dim]),
                          is_training_pl: False}
 
-            scores_l1 += sess.run(score_l1, feed_dict=feed_dict).tolist()
-            scores_l2 += sess.run(score_l2, feed_dict=feed_dict).tolist()
-            scores_fm_xx += sess.run(score_fm_xx, feed_dict=feed_dict).tolist()
-            scores_logits_dxx += sess.run(score_logits_dxx, feed_dict=feed_dict).tolist()
             scores_fm_xxzz += sess.run(score_fm_xxzz, feed_dict=feed_dict).tolist()
             scores_logits_all += sess.run(score_logits_all, feed_dict=feed_dict).tolist()
-            scores_alpha_beta += sess.run(score_alpha_beta, feed_dict=feed_dict).tolist()
             inference_time.append(time.time() - begin_test_time_batch)
 
         inference_time = np.mean(inference_time)
@@ -568,51 +497,20 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                          z_pl: np.random.normal(size=[batch_size, latent_dim]),
                          is_training_pl: False}
 
-            bscores_l1 = sess.run(score_l1, feed_dict=feed_dict).tolist()
-            bscores_l2 = sess.run(score_l2, feed_dict=feed_dict).tolist()
-            bscores_fm_xx = sess.run(score_fm_xx, feed_dict=feed_dict).tolist()
-            bscores_logits_dxx = sess.run(score_logits_dxx, feed_dict=feed_dict).tolist()
             bscores_fm_xxzz = sess.run(score_fm_xxzz, feed_dict=feed_dict).tolist()
             bscores_logits_all = sess.run(score_logits_all, feed_dict=feed_dict).tolist()
-            bscores_alpha_beta = sess.run(score_alpha_beta, feed_dict=feed_dict).tolist()
 
-            scores_l1 += bscores_l1[:size]
-            scores_l2 += bscores_l2[:size]
-            scores_fm_xx += bscores_fm_xx[:size]
-            scores_logits_dxx += bscores_logits_dxx[:size]
             scores_fm_xxzz += bscores_fm_xxzz[:size]
             scores_logits_all += bscores_logits_all[:size]
-            scores_alpha_beta += bscores_alpha_beta[:size]
 
         model = 'alad_sn{}_dzz{}'.format(do_spectral_norm, allow_zz)
-        result_l1 = save_results(scores_l1, testy, model, dataset, 'l1',
-                                 'dzzenabled{}'.format(allow_zz), label, random_seed, step)
-        result_l2 = save_results(scores_l2, testy, model, dataset, 'l2',
-                                 'dzzenabled{}'.format(allow_zz), label, random_seed, step)
-        result_fm_xx = save_results(scores_fm_xx, testy, model, dataset, 'fm',
-                                    'dzzenabled{}'.format(allow_zz), label, random_seed, step)
-        result_logits_dxx = save_results(scores_logits_dxx, testy, model, dataset, 'dxx',
-                                         'dzzenabled{}'.format(allow_zz), label, random_seed, step)
         result_fm_xxzz = save_results(scores_fm_xxzz, testy, model, dataset, 'dxxzz',
                                       'dzzenabled{}'.format(allow_zz), label, random_seed, step)
         result_logits_all = save_results(scores_logits_all, testy, model, dataset, 'd_all',
                                          'dzzenabled{}'.format(allow_zz), label, random_seed, step)
-        result_alpha_beta = save_results(scores_alpha_beta, testy, model, dataset, 'd_all',
-                                         'dzzenabled{}'.format(allow_zz), label, random_seed, step)
 
-        # plot_log(log_loss_dis,"loss discriminator")
-        return result_l1, result_l2, result_fm_xx, result_logits_dxx, result_fm_xxzz, result_logits_all, result_alpha_beta
-
-
-def run(args):
-    """ Runs the training process"""
-    os.environ["CUDA_VISIBLE_DEVICES"] = str(args.gpu)
-    with tf.Graph().as_default():
-        # Set the graph level seed
-        tf.set_random_seed(args.rd)
-        train_and_test(args.dataset, args.nb_epochs, args.d, args.rd, args.label,
-                       args.enable_dzz, args.enable_sm, args.m,
-                       args.enable_early_stop, args.sn)
+        plot_log(log_loss_dis,"loss discriminator")
+        return result_fm_xxzz, result_logits_all
 
 
 def add_result(score_array, x, method):
@@ -632,72 +530,22 @@ def describe_result(type_score, results):
     print("-------------------------------------------")
     print("Describe Result for ", type_score, " scoring")
     df_results = pd.DataFrame(results, columns=['precision', 'recall', 'f1', 'roc_auc'])
-    # if dataset in IMAGES_DATASETS:
-    #     df_results = pd.DataFrame(results, columns=['roc_auc'])
-    # else :
-    #     df_results = pd.DataFrame(results, columns=['precision', 'recall', 'f1'])
-    # print(df_results.describe(include='all')[1:3])
     print(df_results)
 
 
-dataset = 'arrhythmia'
-epoches = 1000
-label = 0
-random_seed = 0
-
-rounds = 1
-score = None
-metric = 3  # accuracy precision fm auroc
-nb_seed = -3
-alpha = 0.7
-beta = 0.3
-seeds = []
-counter = 0
-results_l1, results_l2, results_fm_xx, results_logits_dxx, \
-results_fm_xxzz, results_logits_all, results_alpha_beta = [], [], [], [], [], [], []
-# for label in range(10):
-#     print(">>>>>>>>>>>>>>>> label set to = ", label, " <<<<<<<<<<<<<<<<<<<<<<")
-
-while counter < rounds:
+def run(args):
+    """ Runs the training process"""
+    os.environ["CUDA_VISIBLE_DEVICES"] = str(args.gpu)
+    results_fm_xxzz, results_logits_all = [], []
     print("===========================================")
-    print("start round ", counter)
-    print("random seed = ", random_seed)
-    tf.keras.backend.clear_session()
-    tf.reset_default_graph()
-    tf.Graph().as_default()
-    tf.set_random_seed(random_seed)
-    result_l1, result_l2, result_fm_xx, result_logits_dxx, result_fm_xxzz, result_logits_all, result_alpha_beta = \
-        train_and_test(dataset=dataset, nb_epochs=epoches, degree=2, random_seed=random_seed
-                       , label=label, allow_zz=True, enable_sm=True, score_method=""
-                       , enable_early_stop=False, do_spectral_norm=True)
-    seeds.append(random_seed)
-    results_l1 = add_result(results_l1, result_l1, "l1")
-    results_l2 = add_result(results_l2, result_l2, "l2")
-    results_fm_xx = add_result(results_fm_xx, result_fm_xx, "fm_xx")
-    results_logits_dxx = add_result(results_logits_dxx, result_logits_dxx, "logits_dxx")
-    results_fm_xxzz = add_result(results_fm_xxzz, result_fm_xxzz, "fm_xxzz")
-    results_logits_all = add_result(results_logits_all, result_logits_all, "logits_all")
-    results_alpha_beta = add_result(results_alpha_beta, result_alpha_beta, "alpha_beta")
-    counter += 1
-    random_seed += 1
+    with tf.Graph().as_default():
+        # Set the graph level seed
+        tf.set_random_seed(args.rd)
+        result_fm_xxzz, result_logits_all =train_and_test(dataset=args.dataset, nb_epochs=args.nb_epochs,
+                       random_seed=args.rd,label= args.label, allow_zz=args.enable_dzz, do_spectral_norm= args.sn)
 
-# # sort part
-# score = results_fm_xxzz
-# indexes = np.array(score)[:, metric].argsort()
-# seeds = np.array(seeds)[indexes[nb_seed:]]
-# results_l1 = np.array(results_l1)[indexes[nb_seed:]]
-# results_l2 = np.array(results_l2)[indexes[nb_seed:]]
-# results_fm_xx = np.array(results_fm_xx)[indexes[nb_seed:]]
-# results_logits_dxx = np.array(results_logits_dxx)[indexes[nb_seed:]]
-# results_fm_xxzz = np.array(results_fm_xxzz)[indexes[nb_seed:]]
-# results_logits_all = np.array(results_logits_all)[indexes[nb_seed:]]
-# results_alpha_beta = np.array(results_alpha_beta)[indexes[nb_seed:]]
+        results_fm_xxzz = add_result(results_fm_xxzz, result_fm_xxzz, "fm_xxzz")
+        results_logits_all = add_result(results_logits_all, result_logits_all, "logits_all")
 
-print("seeds : ", seeds)
-describe_result('l1', results_l1)
-describe_result('l2', results_l2)
-describe_result('fm_xx', results_fm_xx)
-describe_result('logits_dxx', results_logits_dxx)
-describe_result('fm_xxzz', results_fm_xxzz)
-describe_result('logits_all', results_logits_all)
-describe_result('alpha_beta', results_alpha_beta)
+        describe_result('fm_xxzz', results_fm_xxzz)
+        describe_result('logits_all', results_logits_all)
