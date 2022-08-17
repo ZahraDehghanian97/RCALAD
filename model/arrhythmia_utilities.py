@@ -1,6 +1,6 @@
 """
 
-Arrhythmia ALAD architecture.
+Arrhythmia RCALAD architecture.
 
 Generator (decoder), encoder and discriminator.
 

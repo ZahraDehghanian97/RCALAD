@@ -1,6 +1,6 @@
 """
 
-CIFAR10 ALAD architecture.
+CIFAR10 RCALAD architecture.
 
 Generator (decoder), encoder and discriminator.
 

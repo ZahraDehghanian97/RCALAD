@@ -60,7 +60,7 @@ def display_progression_epoch(j, id_max):
 def create_logdir(dataset, label, rd,
                   allow_zz, do_spectral_norm):
     """ Directory to save training logs, weights, biases, etc."""
-    model = 'alad_sn{}_dzz{}'.format(do_spectral_norm, allow_zz)
+    model = 'RCALAD_sn{}_dzz{}'.format(do_spectral_norm, allow_zz)
     return "../../train_logs/{}_{}_dzzenabled{}_{}_label{}" \
            "rd{}".format(dataset, model, allow_zz, label, rd)
 
@@ -87,7 +87,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
     # Import model and data
     sys.path.append('/content/Adversarially-Learned-Anomaly-Detection')
-    network = importlib.import_module('alad.{}_utilities'.format(dataset))
+    network = importlib.import_module('RCALAD.{}_utilities'.format(dataset))
     data = importlib.import_module("data.{}".format(dataset))
 
     # Parameters
@@ -115,7 +115,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     nr_batches_test = int(testx.shape[0] / batch_size)
 
     print('Building graph...')
-    print("ALAD is training with the following parameters:")
+    print("RCALAD is training with the following parameters:")
     display_parameters(batch_size, starting_lr, ema_decay, degree, label,
                        allow_zz, do_spectral_norm, nb_epochs)
 
@@ -503,7 +503,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             scores_fm_xxzz += bscores_fm_xxzz[:size]
             scores_logits_all += bscores_logits_all[:size]
 
-        model = 'alad_sn{}_dzz{}'.format(do_spectral_norm, allow_zz)
+        model = 'RCALAD_sn{}_dzz{}'.format(do_spectral_norm, allow_zz)
         result_fm_xxzz = save_results(scores_fm_xxzz, testy, model, dataset, 'dxxzz',
                                       'dzzenabled{}'.format(allow_zz), label, random_seed, step)
         result_logits_all = save_results(scores_logits_all, testy, model, dataset, 'd_all',
@@ -542,7 +542,7 @@ def run(args):
         # Set the graph level seed
         tf.set_random_seed(args.rd)
         result_fm_xxzz, result_logits_all =train_and_test(dataset=args.dataset, nb_epochs=args.nb_epochs,
-                       random_seed=args.rd,label= args.label, allow_zz=args.enable_dzz, do_spectral_norm= args.sn)
+                       random_seed=args.rd,degree=args.d ,label= args.label, allow_zz=args.enable_dzz, do_spectral_norm= args.sn)
 
         results_fm_xxzz = add_result(results_fm_xxzz, result_fm_xxzz, "fm_xxzz")
         results_logits_all = add_result(results_logits_all, result_logits_all, "logits_all")

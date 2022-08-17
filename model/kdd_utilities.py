@@ -1,6 +1,6 @@
 """
 
-KDD ALAD architecture.
+KDD RCALAD architecture.
 
 Generator (decoder), encoder and discriminator.
 
