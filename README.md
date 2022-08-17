@@ -36,6 +36,6 @@ pip3 install -r requirements.txt
 Running the code with different options
 
 ```
-python main.py <model>  <dataset> --nb_epochs=<number_epochs> --label=<0, 1, 2, 3, 4, 5, 6, 7, 8, 9> --sn=<bool> --enable_dzz=<bool> --rd=<int> etc. 
+python main.py <model>  <dataset> --nb_epochs=<number_epochs> --label=<0, 1, 2, 3, 4, 5, 6, 7, 8, 9> --sn=<bool> --enable_dzz=<bool> --rd=<int> --d-<int> etc. 
 ```
 Please refer to the argument parser in main.py for more details.
