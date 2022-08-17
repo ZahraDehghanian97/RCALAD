@@ -70,7 +70,7 @@ def _get_dataset(scale):
     global final_dataset
     if not bool(final_dataset):
         # data = scipy.io.loadmat("D:/univesity/foqelisans/final_project/code/Adversarially-Learned-Anomaly-Detection_dxxzz/data/arrhythmia.mat")
-        data = scipy.io.loadmat("/content/drive/MyDrive/colab/ALAD/arrhythmia.mat")
+        data = scipy.io.loadmat("/content/RCALAD/data/arrhythmia.mat")
 
         full_x_data = data["X"]
         full_y_data = data['y']

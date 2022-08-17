@@ -45,7 +45,6 @@ def display_parameters(batch_size, starting_lr, ema_decay, degree, label,
     print('EMA Decay: ', ema_decay)
     print('Degree for L norms: ', degree)
     print('Anomalous label: ', label)
-    print('Discriminator zz enabled: ', allow_zz)
     print('Spectral Norm enabled: ', do_spectral_norm)
 
 
@@ -61,7 +60,7 @@ def create_logdir(dataset, label, rd,
                   allow_zz, do_spectral_norm):
     """ Directory to save training logs, weights, biases, etc."""
     model = 'RCALAD_sn{}_dzz{}'.format(do_spectral_norm, allow_zz)
-    return "../../train_logs/{}_{}_dzzenabled{}_{}_label{}" \
+    return "../../train_logs/{}_{}_dzzenabled{}_label{}" \
            "rd{}".format(dataset, model, allow_zz, label, rd)
 
 
@@ -447,7 +446,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             train_loss_dis_xx /= nr_batches_train
             train_loss_dis_zz /= nr_batches_train
             train_loss_dis_xxzz /= nr_batches_train
-            if epoch % 10 == 0:
+            if epoch % 100 == 0:
                 if allow_zz:
                     print("Epoch %d | time = %ds | loss gen = %.4f | loss enc = %.4f | "
                           "loss dis = %.4f | loss dis xz = %.4f | loss dis xx = %.4f | "
@@ -509,12 +508,12 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
         result_logits_all = save_results(scores_logits_all, testy, model, dataset, 'd_all',
                                          'dzzenabled{}'.format(allow_zz), label, random_seed, step)
 
-        plot_log(log_loss_dis,"loss discriminator")
+        # plot_log(log_loss_dis,"loss discriminator")
         return result_fm_xxzz, result_logits_all
 
 
-def add_result(score_array, x, method):
-    global IMAGES_DATASETS, dataset
+def add_result(dataset,score_array, x, method):
+    global IMAGES_DATASETS
     print("----------------------------")
     if dataset in IMAGES_DATASETS:
         print("Testing with method %s: AUROC = %.4f"
@@ -544,8 +543,8 @@ def run(args):
         result_fm_xxzz, result_logits_all =train_and_test(dataset=args.dataset, nb_epochs=args.nb_epochs,
                        random_seed=args.rd,degree=args.d ,label= args.label, allow_zz=args.enable_dzz, do_spectral_norm= args.sn)
 
-        results_fm_xxzz = add_result(results_fm_xxzz, result_fm_xxzz, "fm_xxzz")
-        results_logits_all = add_result(results_logits_all, result_logits_all, "logits_all")
+        results_fm_xxzz = add_result(args.dataset,results_fm_xxzz, result_fm_xxzz, "fm_xxzz")
+        results_logits_all = add_result(args.dataset,results_logits_all, result_logits_all, "logits_all")
 
         describe_result('fm_xxzz', results_fm_xxzz)
         describe_result('logits_all', results_logits_all)
