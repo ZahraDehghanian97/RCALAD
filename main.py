@@ -63,7 +63,7 @@ if __name__ == "__main__":
     parser.add_argument('--nb_epochs', nargs="?", type=int, default=1000, help='number of epochs you want to train the dataset on')
     parser.add_argument('--gpu', nargs="?", type=int, default=0, help='which gpu to use')
     parser.add_argument('--label', nargs="?", type=int, default=1, help='anomalous label for the experiment')
-    parser.add_argument('--rd', nargs="?", type=int, default=9,  help='random_seed')
+    parser.add_argument('--rd', nargs="?", type=int, default=13,  help='random_seed')
     parser.add_argument('--enable_dzz',default=True, action='store_true', help='enable dzz discriminator')
     parser.add_argument('--sn', action='store_true',default=True, help='enable spectral_norm')
     parser.add_argument('--d', nargs="?", type=int, default=2, help='degree for the L norm')
