@@ -548,25 +548,3 @@ def run(args):
 
         describe_result('fm_xxzz', results_fm_xxzz)
         describe_result('logits_all', results_logits_all)
-
-
-
-def run2(seed):
-    """ Runs the training process"""
-    os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-    results_fm_xxzz, results_logits_all = [], []
-    print("===========================================")
-    with tf.Graph().as_default():
-        # Set the graph level seed
-        tf.set_random_seed(seed)
-        result_fm_xxzz, result_logits_all =train_and_test(dataset='arrhythmia', nb_epochs=1000,
-                       random_seed=seed,degree=2,label= 1, allow_zz=True, do_spectral_norm= True)
-
-        results_fm_xxzz = add_result("arrhythmia",results_fm_xxzz, result_fm_xxzz, "fm_xxzz")
-        results_logits_all = add_result("arrhythmia",results_logits_all, result_logits_all, "logits_all")
-
-        describe_result('fm_xxzz', results_fm_xxzz)
-        describe_result('logits_all', results_logits_all)
-
-for i in range(30):
-    run2(i)
