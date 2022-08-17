@@ -66,5 +66,6 @@ if __name__ == "__main__":
     parser.add_argument('--rd', nargs="?", type=int, default=9,  help='random_seed')
     parser.add_argument('--enable_dzz',default=True, action='store_true', help='enable dzz discriminator')
     parser.add_argument('--sn', action='store_true',default=True, help='enable spectral_norm')
+    parser.add_argument('--d', nargs="?", type=int, default=2, help='degree for the L norm')
 
     run(parser.parse_args())
