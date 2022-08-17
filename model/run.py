@@ -86,8 +86,8 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     config.gpu_options.allow_growth = True
 
     # Import model and data
-    sys.path.append('/content/Adversarially-Learned-Anomaly-Detection')
-    network = importlib.import_module('RCALAD.{}_utilities'.format(dataset))
+    sys.path.append('/content/RCALAD')
+    network = importlib.import_module('model.{}_utilities'.format(dataset))
     data = importlib.import_module("data.{}".format(dataset))
 
     # Parameters
