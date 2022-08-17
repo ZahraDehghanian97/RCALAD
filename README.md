@@ -1,7 +1,7 @@
 # Regularized-Compelete-Adversarially-Learned-Anomaly-Detection
 RCALAD () official code
 
-The code for the paper ["Regularized Compelete Adversarially Learned Anomaly Detection" (authors: Zahra Dehghanian, Saeed Nabati, Maryam Amirmazlaghani)](https://arxiv.org/abs/1812.02288) is now open source! 
+The code for the paper ["Regularized Compelete Adversarially Learned Anomaly Detection" (authors: Zahra Dehghanian, Saeed Saravani, Maryam Amirmazlaghani)](https://arxiv.org/abs/1812.02288) is now open source! 
 
 Please reach us via emails or via github issues for any enquiries!
 
@@ -22,7 +22,7 @@ To run the code, follow those steps:
 Download the project code:
 
 ```
-git clone https://github.com/houssamzenati/Adversarially-Learned-Anomaly-Detection.git
+https://github.com/zahraDehghanian97/RCALAD.git
 ```
 Install requirements (in the cloned repository):
 
@@ -36,9 +36,6 @@ pip3 install -r requirements.txt
 Running the code with different options
 
 ```
-python3 main.py <model> <dataset> run --nb_epochs=<number_epochs> --label=<0, 1, 2, 3, 4, 5, 6, 7, 8, 9> --m=<'cross-e','fm'> --d=<int> --rd=<int> etc. 
+python main.py <model>  <dataset> --nb_epochs=<number_epochs> --label=<0, 1, 2, 3, 4, 5, 6, 7, 8, 9> --sn=<bool> --enable_dzz=<bool> --rd=<int> etc. 
 ```
 Please refer to the argument parser in main.py for more details.
-
-When using alad, please use it with --sn, --enable_early_stop and --enable_dzz. (Different options are provided to enable the ablation study).
-Important: we also provide implementations of DSEBM and DAGMM methods as open source work, the results reported in our paper for those methods, however, are derived from the DAGMM paper.
