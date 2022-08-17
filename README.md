@@ -1,5 +1,5 @@
 # Regularized-Compelete-Adversarially-Learned-Anomaly-Detection
-RCALAD () official code
+*********RCALAD official code***********
 
 The code for the paper ["Regularized Compelete Adversarially Learned Anomaly Detection" (authors: Zahra Dehghanian, Saeed Saravani, Maryam Amirmazlaghani)](https://arxiv.org/abs/1812.02288) is now open source! 
 
