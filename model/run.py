@@ -17,7 +17,7 @@ import sys
 
 pd.set_option('display.max_columns', 500)
 
-sys.path.append('/content/RCALADx')
+sys.path.append('/content/RCALAD')
 from utils.adapt_data import batch_fill
 from utils.evaluations import save_results, heatmap, plot_log
 from utils.constants import IMAGES_DATASETS
