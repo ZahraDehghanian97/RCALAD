@@ -93,6 +93,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     starting_lr = network.learning_rate
     batch_size = network.batch_size
     latent_dim = network.latent_dim
+    x_dim = data.get_shape_input()
     ema_decay = 0.999
 
     global_step = tf.Variable(0, name='global_step', trainable=False)
@@ -109,9 +110,9 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     trainx, trainy = data.get_train(label)
     trainx_copy = trainx.copy()
     testx, testy = data.get_test(label)
-    print(trainx.shape)
     trainx_t = np.random.normal(size=trainx.shape)
-    trainy_t = np.random.normal(size=trainy.shape)
+    testx_t = np.random.normal(size=testx.shape)
+    print(trainx.shape)
     rng = np.random.RandomState(random_seed)
     nr_batches_train = int(trainx.shape[0] / batch_size)
     nr_batches_test = int(testx.shape[0] / batch_size)
@@ -419,6 +420,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
                 # train discriminator
                 feed_dict = {x_pl: trainx[ran_from:ran_to],
+                            x_pl_t: trainx_t[ran_from:ran_to],
                              z_pl: np.random.normal(size=[batch_size, latent_dim]),
                              is_training_pl: True,
                              learning_rate: lr}
@@ -442,6 +444,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
                 # train generator and encoder
                 feed_dict = {x_pl: trainx_copy[ran_from:ran_to],
+                            x_pl_t: trainx_t[ran_from:ran_to],
                              z_pl: np.random.normal(size=[batch_size, latent_dim]),
                              is_training_pl: True,
                              learning_rate: lr}
@@ -495,11 +498,11 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             ran_to = (t + 1) * batch_size
             begin_test_time_batch = time.time()
 
-            feed_dict = {x_pl: trainx[ran_from:ran_to],
-                             x_pl_t: trainx_t[ran_from:ran_to],
-                             z_pl: np.random.normal(size=[batch_size, latent_dim]),
-                             is_training_pl: True,
-                             learning_rate: lr}
+            feed_dict = {x_pl: testx[ran_from:ran_to],
+                        x_pl_t: testx_t[ran_from:ran_to],
+                        z_pl: np.random.normal(size=[batch_size, latent_dim]),
+                        is_training_pl: True,
+                        learning_rate: lr}
 
             scores_fm_xxzz += sess.run(score_fm_xxzz, feed_dict=feed_dict).tolist()
             scores_logits_all += sess.run(score_logits_all, feed_dict=feed_dict).tolist()
@@ -511,6 +514,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
         if testx.shape[0] % batch_size != 0:
             batch, size = batch_fill(testx, batch_size)
             feed_dict = {x_pl: batch,
+                        x_pl_t: testx_t[ran_from:ran_to],
                          z_pl: np.random.normal(size=[batch_size, latent_dim]),
                          is_training_pl: False}
 
@@ -570,12 +574,12 @@ def run(args):
 
 if __name__ == "__main__":
     dataset = 'cifar10'
-    epoches = 100
+    epoches = 1
     label = 1
 
     result_fm_xxzz, result_logits_all = \
         train_and_test(dataset=dataset, nb_epochs=epoches, degree=2, random_seed=42
                         , label=label, allow_zz=True
-                        , do_spectral_norm=True)
+                        , do_spectral_norm=False)
     results_fm_xxzz = add_result(dataset,result_fm_xxzz, result_fm_xxzz, "fm_xxzz")
             
