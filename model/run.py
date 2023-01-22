@@ -17,7 +17,7 @@ import sys
 
 pd.set_option('display.max_columns', 500)
 
-sys.path.append('/content/Adversarially-Learned-Anomaly-Detection')
+sys.path.append('/content/RCALADx')
 from utils.adapt_data import batch_fill
 from utils.evaluations import save_results, heatmap, plot_log
 from utils.constants import IMAGES_DATASETS
@@ -99,6 +99,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
     # Placeholders
     x_pl = tf.placeholder(tf.float32, shape=data.get_shape_input(), name="input_x")
+    x_pl_t = tf.placeholder(tf.float32, shape=data.get_shape_input(), name="input_x_t")
     z_pl = tf.placeholder(tf.float32, shape=[None, latent_dim], name="input_z")
     is_training_pl = tf.placeholder(tf.bool, [], name='is_training_pl')
     learning_rate = tf.placeholder(tf.float32, shape=(), name="lr_pl")
@@ -109,6 +110,8 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     trainx_copy = trainx.copy()
     testx, testy = data.get_test(label)
     print(trainx.shape)
+    trainx_t = np.random.normal(size=trainx.shape)
+    trainy_t = np.random.normal(size=trainy.shape)
     rng = np.random.RandomState(random_seed)
     nr_batches_train = int(trainx.shape[0] / batch_size)
     nr_batches_test = int(testx.shape[0] / batch_size)
@@ -128,6 +131,8 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     with tf.variable_scope('encoder_model'):
         z_gen = enc(x_pl, is_training=is_training_pl,
                     do_spectral_norm=do_spectral_norm)
+        z_gen_t = enc(x_pl_t, is_training=is_training_pl,
+                      do_spectral_norm=do_spectral_norm, reuse=True)
 
     with tf.variable_scope('generator_model'):
         x_gen = gen(z_pl, is_training=is_training_pl)
@@ -136,6 +141,8 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     with tf.variable_scope('encoder_model'):
         rec_z = enc(x_gen, is_training=is_training_pl, reuse=True,
                     do_spectral_norm=do_spectral_norm)
+        rec_z_gen = enc(rec_x, is_training=is_training_pl,
+                      do_spectral_norm=do_spectral_norm, reuse=True)
 
     with tf.variable_scope('discriminator_model_xz'):
         l_encoder, inter_layer_inp_xz = dis_xz(x_pl, z_gen,
@@ -145,6 +152,10 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                                                  is_training=is_training_pl,
                                                  reuse=True,
                                                  do_spectral_norm=do_spectral_norm)
+        l_t, _ = dis_xz(x_pl_t, z_gen_t,
+                      is_training=is_training_pl,
+                      reuse=True,
+                      do_spectral_norm=do_spectral_norm)
 
     with tf.variable_scope('discriminator_model_xx'):
         x_logit_real, inter_layer_inp_xx = dis_xx(x_pl, x_pl,
@@ -160,9 +171,9 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                                                   reuse=True, do_spectral_norm=do_spectral_norm)
 
     with tf.variable_scope('discriminator_model_xxzz'):
-        xz_logit_real, inter_layer_inp_xxzz = dis_xxzz(x_pl, x_pl, z_pl, z_pl, is_training=is_training_pl,
+        xz_logit_real, inter_layer_inp_xxzz = dis_xxzz(x_pl, x_pl, z_gen, z_gen, is_training=is_training_pl,
                                                        do_spectral_norm=do_spectral_norm)
-        xz_logit_fake, inter_layer_rct_xxzz = dis_xxzz(x_pl, rec_x, z_pl, rec_z, is_training=is_training_pl,
+        xz_logit_fake, inter_layer_rct_xxzz = dis_xxzz(x_pl, rec_x, z_gen, rec_z_gen, is_training=is_training_pl,
                                                        reuse=True, do_spectral_norm=do_spectral_norm)
 
     with tf.name_scope('loss_functions'):
@@ -172,7 +183,9 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             labels=tf.ones_like(l_encoder), logits=l_encoder))
         loss_dis_gen = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
             labels=tf.zeros_like(l_generator), logits=l_generator))
-        dis_loss_xz = loss_dis_gen + loss_dis_enc
+        loss_dis_t = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
+            labels=tf.zeros_like(l_t), logits=l_t))
+        dis_loss_xz = loss_dis_gen + loss_dis_enc + loss_dis_t
 
         # discriminator xx
         x_real_dis = tf.nn.sigmoid_cross_entropy_with_logits(
@@ -218,11 +231,11 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
         cost_x = tf.reduce_mean(x_real_gen + x_fake_gen)
         cost_z = tf.reduce_mean(z_real_gen + z_fake_gen)
-        cost_xz = 0  # tf.reduce_mean(xz_real_gen + xz_fake_gen)
+        cost_xz = tf.reduce_mean(xz_real_gen + xz_fake_gen)
 
         cycle_consistency_loss = cost_x + cost_z + cost_xz if allow_zz else cost_x + cost_xz
-        loss_generator = gen_loss_xz + cycle_consistency_loss
-        loss_encoder = enc_loss_xz + cycle_consistency_loss
+        loss_generator = gen_loss_xz # + cycle_consistency_loss
+        loss_encoder = enc_loss_xz # + cycle_consistency_loss
 
     with tf.name_scope('optimizers'):
 
@@ -291,7 +304,6 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
         z_gen_ema = enc(x_pl, is_training=is_training_pl,
                         getter=get_getter(enc_ema), reuse=True,
                         do_spectral_norm=do_spectral_norm)
-
     with tf.variable_scope('generator_model'):
         rec_x_ema = gen(z_gen_ema, is_training=is_training_pl,
                         getter=get_getter(gen_ema), reuse=True)
@@ -299,6 +311,9 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                         getter=get_getter(gen_ema), reuse=True)
     with tf.variable_scope('encoder_model'):
         rec_z_ema = enc(x_gen_ema, is_training=is_training_pl,
+                        getter=get_getter(enc_ema), reuse=True,
+                        do_spectral_norm=do_spectral_norm)
+        rec_z_gen_ema = enc(rec_x_ema, is_training=is_training_pl,
                         getter=get_getter(enc_ema), reuse=True,
                         do_spectral_norm=do_spectral_norm)
 
@@ -330,13 +345,13 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                                                           do_spectral_norm=do_spectral_norm)
 
     with tf.variable_scope('discriminator_model_xxzz'):
-        l_encoder_emaxxzz, inter_layer_inp_emaxxzz = dis_xxzz(x_pl, x_pl, z_pl, z_pl,
+        l_encoder_emaxxzz, inter_layer_inp_emaxxzz = dis_xxzz(x_pl, x_pl, z_gen_ema, z_gen_ema,
                                                               is_training=is_training_pl,
                                                               getter=get_getter(xxzz_ema),
                                                               reuse=True,
                                                               do_spectral_norm=do_spectral_norm)
 
-        l_generator_emaxxzz, inter_layer_rct_emaxxzz = dis_xxzz(x_pl, rec_x_ema, z_pl, z_gen_ema,
+        l_generator_emaxxzz, inter_layer_rct_emaxxzz = dis_xxzz(x_pl, rec_x_ema, z_gen_ema,rec_z_gen_ema,
                                                                 is_training=is_training_pl,
                                                                 getter=get_getter(xxzz_ema),
                                                                 reuse=True,
@@ -408,9 +423,10 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
                              is_training_pl: True,
                              learning_rate: lr}
 
-                _, _, _, ld, ldxz, ldxx, ldzz, ldxxzz, step = sess.run([train_dis_op_xz,
+                _, _, _,_, ld, ldxz, ldxx, ldzz, ldxxzz, step = sess.run([train_dis_op_xz,
                                                                         train_dis_op_xx,
                                                                         train_dis_op_zz,
+                                                                        train_dis_op_xxzz,
                                                                         loss_discriminator,
                                                                         dis_loss_xz,
                                                                         dis_loss_xx,
@@ -446,7 +462,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             train_loss_dis_xx /= nr_batches_train
             train_loss_dis_zz /= nr_batches_train
             train_loss_dis_xxzz /= nr_batches_train
-            if epoch % 100 == 0:
+            if epoch % 10 == 0:
                 if allow_zz:
                     print("Epoch %d | time = %ds | loss gen = %.4f | loss enc = %.4f | "
                           "loss dis = %.4f | loss dis xz = %.4f | loss dis xx = %.4f | "
@@ -479,9 +495,11 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
             ran_to = (t + 1) * batch_size
             begin_test_time_batch = time.time()
 
-            feed_dict = {x_pl: testx[ran_from:ran_to],
-                         z_pl: np.random.normal(size=[batch_size, latent_dim]),
-                         is_training_pl: False}
+            feed_dict = {x_pl: trainx[ran_from:ran_to],
+                             x_pl_t: trainx_t[ran_from:ran_to],
+                             z_pl: np.random.normal(size=[batch_size, latent_dim]),
+                             is_training_pl: True,
+                             learning_rate: lr}
 
             scores_fm_xxzz += sess.run(score_fm_xxzz, feed_dict=feed_dict).tolist()
             scores_logits_all += sess.run(score_logits_all, feed_dict=feed_dict).tolist()
@@ -548,3 +566,16 @@ def run(args):
 
         describe_result('fm_xxzz', results_fm_xxzz)
         describe_result('logits_all', results_logits_all)
+
+
+if __name__ == "__main__":
+    dataset = 'cifar10'
+    epoches = 100
+    label = 1
+
+    result_fm_xxzz, result_logits_all = \
+        train_and_test(dataset=dataset, nb_epochs=epoches, degree=2, random_seed=42
+                        , label=label, allow_zz=True
+                        , do_spectral_norm=True)
+    results_fm_xxzz = add_result(dataset,result_fm_xxzz, result_fm_xxzz, "fm_xxzz")
+            
