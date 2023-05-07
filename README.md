@@ -1,18 +1,16 @@
-# Regularized-Compelete-Adversarially-Learned-Anomaly-Detection
+# Regularized Complete Cycle Consistent GAN for Anomaly Detection
 *********RCALAD official code*********
 
-The code for the paper ["Regularized Compelete Adversarially Learned Anomaly Detection" (authors: Zahra Dehghanian, Saeed Saravani, Maryam Amirmazlaghani)](https://arxiv.org/abs/1812.02288) is now open source! 
+The code for the paper ["Regularized Complete Cycle Consistent GAN for Anomaly Detection" (authors: Zahra Dehghanian, Saeed Saravani, Maryam Amirmazlaghani and Mohamad Rahmati)](https://arxiv.org/abs/2304.07769) is now open source! 
 
 Please reach us via emails or via github issues for any enquiries!
 
 Please cite our work if you find it useful for your research and work.
 ```
-@article{Zenati2018AdversariallyLA,
-  title={Adversarially Learned Anomaly Detection},
-  author={Houssam Zenati and Manon Romain and Chuan Sheng Foo and Bruno Lecouat and Vijay R. Chandrasekhar},
-  journal={2018 IEEE International Conference on Data Mining (ICDM)},
-  year={2018},
-  pages={727-736}
+@article{Dehghanian2023RegularizedCC,
+  title={Regularized Complete Cycle Consistent GAN for Anomaly Detection},
+  author={Zahra Dehghanian, Saeed Saravani, Maryam Amirmazlaghani and Mohamad Rahmati},
+  year={2023}
 }
 ```
 
