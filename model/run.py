@@ -232,11 +232,11 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
 
         cost_x = tf.reduce_mean(x_real_gen + x_fake_gen)
         cost_z = tf.reduce_mean(z_real_gen + z_fake_gen)
-        cost_xz = tf.reduce_mean(xz_real_gen + xz_fake_gen)
+        cost_xz = tf.reduce_mean(xz_real_gen + xz_fake_gen)/10
 
         cycle_consistency_loss = cost_x + cost_z + cost_xz if allow_zz else cost_x + cost_xz
-        loss_generator = gen_loss_xz # + cycle_consistency_loss
-        loss_encoder = enc_loss_xz # + cycle_consistency_loss
+        loss_generator = gen_loss_xz  + cycle_consistency_loss
+        loss_encoder = enc_loss_xz  + cycle_consistency_loss
 
     with tf.name_scope('optimizers'):
 
@@ -574,7 +574,7 @@ def run(args):
 
 if __name__ == "__main__":
     dataset = 'cifar10'
-    epoches = 1
+    epoches = 100
     label = 1
 
     result_fm_xxzz, result_logits_all = \
