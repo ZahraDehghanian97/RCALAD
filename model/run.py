@@ -571,15 +571,3 @@ def run(args):
         describe_result('fm_xxzz', results_fm_xxzz)
         describe_result('logits_all', results_logits_all)
 
-
-if __name__ == "__main__":
-    dataset = 'cifar10'
-    epoches = 100
-    label = 1
-
-    result_fm_xxzz, result_logits_all = \
-        train_and_test(dataset=dataset, nb_epochs=epoches, degree=2, random_seed=42
-                        , label=label, allow_zz=True
-                        , do_spectral_norm=False)
-    results_fm_xxzz = add_result(dataset,result_fm_xxzz, result_fm_xxzz, "fm_xxzz")
-            
