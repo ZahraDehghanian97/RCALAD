@@ -1,4 +1,4 @@
-# Regularized Complete Cycle Consistent GAN for Anomaly Detection
+# Spot The Odd One Out: Regularized Complete Cycle Consistent Anomaly Detector GAN
 *********RCALAD official code*********
 
 The code for the paper ["Spot The Odd One Out: Regularized Complete Cycle Consistent Anomaly Detector GAN" (authors: Zahra Dehghanian, Saeed Saravani, Maryam Amirmazlaghani and Mohamad Rahmati)](https://arxiv.org/abs/2304.07769) is now open source! 
