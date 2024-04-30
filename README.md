@@ -10,6 +10,8 @@ Please reach us via emails or via github issues for any enquiries!
 This code package was developed and tested with Python 3.7.6. Make sure all dependencies specified in the requirements.txt file are satisfied before running the model. This can be achieved by
 
 ```
+conda create --name tf1 python=3.7
+conda activate tf1
 pip3 install -r requirements.txt
 ```
 
@@ -21,6 +23,8 @@ Running the code with different options
 ```
 python main.py <model>  <dataset> --nb_epochs=<number_epochs> --label=<0, 1, 2, 3, 4, 5, 6, 7, 8, 9> --sn=<bool> --enable_dzz=<bool> --rd=<int> --d-<int> etc. 
 ```
+The default option will run the RCALAD model on Arrhythmia dataset with 1000 epoches.
+
 Please refer to the argument parser in main.py for more details.
 
 
