@@ -5,7 +5,7 @@ import importlib
 import logging
 import os
 import shutil
-import urllib3
+# import urllib3
 import zipfile
 # import data
 

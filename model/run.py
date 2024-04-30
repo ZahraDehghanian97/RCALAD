@@ -1,10 +1,13 @@
 import warnings
 import pandas as pd
 
+
 warnings.filterwarnings('ignore')
 import time
 import numpy as np
-import tensorflow.compat.v1 as tf
+# import tensorflow.compat.v1 as tf
+from tensorflow import compat
+tf = compat.v1
 
 tf.disable_v2_behavior()
 tf.logging.set_verbosity(tf.logging.ERROR)
@@ -94,7 +97,7 @@ def train_and_test(dataset, nb_epochs, degree, random_seed, label,
     batch_size = network.batch_size
     latent_dim = network.latent_dim
     x_dim = data.get_shape_input()
-    ema_decay = 0.999
+    ema_decay = 0.5
 
     global_step = tf.Variable(0, name='global_step', trainable=False)
 
