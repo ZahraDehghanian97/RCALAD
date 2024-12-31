@@ -1,7 +1,7 @@
 # Spot The Odd One Out: Regularized Complete Cycle Consistent Anomaly Detector GAN
 *********RCALAD official code*********
 
-The code for the paper ["Spot The Odd One Out: Regularized Complete Cycle Consistent Anomaly Detector GAN" (authors: Zahra Dehghanian, Saeed Saravani, Maryam Amirmazlaghani and Mohamad Rahmati)](https://arxiv.org/abs/2304.07769) is now open source! 
+The code for the paper ["Anomaly Detection Using Complete Cycle Consistent Generative Adversarial Network" (authors: Zahra Dehghanian, Saeed Saravani, Maryam Amirmazlaghani and Mohamad Rahmati)](https://arxiv.org/abs/2304.07769) is now open source! 
 
 Please reach us via emails or via github issues for any enquiries!
 
@@ -32,9 +32,11 @@ Please refer to the argument parser in main.py for more details.
 
 Please cite our work if you find it useful for your research and work.
 ```
-@article{Dehghanian2023Spot,
-  title={Spot The Odd One Out: Regularized Complete Cycle Consistent Anomaly Detector GAN},
-  author={Zahra Dehghanian, Saeed Saravani, Maryam Amirmazlaghani and Mohamad Rahmati},
-  year={2023}
+@article{dehghanian2024anomaly,
+  title={Anomaly Detection Using Complete Cycle Consistent Generative Adversarial Network},
+  author={Dehghanian, Zahra and Saravani, Saeed and Amirmazlaghani, Maryam and Rahmati, Mohamad},
+  journal={International journal of neural systems},
+  pages={2550004},
+  year={2024}
 }
 ```
