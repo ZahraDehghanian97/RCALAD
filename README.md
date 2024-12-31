@@ -1,4 +1,4 @@
-# Spot The Odd One Out: Regularized Complete Cycle Consistent Anomaly Detector GAN
+# Anomaly Detection Using Complete Cycle Consistent Generative Adversarial Network
 *********RCALAD official code*********
 
 The code for the paper ["Anomaly Detection Using Complete Cycle Consistent Generative Adversarial Network" (authors: Zahra Dehghanian, Saeed Saravani, Maryam Amirmazlaghani and Mohamad Rahmati)](https://arxiv.org/abs/2304.07769) is now open source! 
